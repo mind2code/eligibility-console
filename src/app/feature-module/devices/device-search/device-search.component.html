@@ -1,0 +1,80 @@
+<div class="page-wrapper">
+  <div class="content">
+    <!-- Breadcrumb -->
+    <div class="d-md-flex d-block align-items-center justify-content-between mb-3">
+      <app-breadcrumbs title="Rechercher un compteur" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white d-inline-flex align-items-center" data-bs-toggle="dropdown">
+              <i class="ti ti-file-export me-1"></i>Exporter
+            </a>
+            <ul class="dropdown-menu  dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"><i class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"><i class="ti ti-file-type-xls me-1"></i>Export as Excel </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-2">
+          <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#add_company" class="btn btn-primary d-flex align-items-center"><i class="ti ti-circle-plus me-2"></i> Ajouter</a>
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+
+    </div>
+    <!-- /Breadcrumb -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Basic Inputs</h5>
+          </div>
+          <div class="card-body">
+            <form action="#">
+              <div class="mb-0 row">
+                <div class="col-md-10">
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="deviceSerialNo" [(ngModel)]="deviceSerialNo" placeholder="Entrer le numéro de compteur"
+                           aria-label="Username" aria-describedby="basic-addon1">
+                    <button class="btn btn-primary" (click)="checkIfExists()" type="button">Rechercher</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div class="row mt-5">
+              <div *ngIf="isVerify" class="col-md-12">
+                @if(!existDevice){
+                <div class="alert alert-danger" role="alert">
+                  Ce compteur n'existe pas dans ZONOS
+                </div>
+                <div class="card" style="width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">SMART VENDING</h5>
+                    <p class="card-text">Connectez-vous à SMART VENDING pour le traitement</p>
+                    <a href="javascript:void(0);" class="btn btn-sm btn-primary card-link">Consulter</a>
+                  </div>
+                </div>
+                }
+                @if(existDevice){
+                  <div class="alert alert-success" role="alert">
+                    Ce compteur existe dans ZONOS
+                  </div>
+                  <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                      <h5 class="card-title">ZONOS VENDING</h5>
+                      <p class="card-text">Connectez-vous à ZONOS VENDING pour le traitement</p>
+                      <a href="javascript:void(0);" class="btn btn-sm btn-primary card-link">Consulter</a>
+                    </div>
+                  </div>
+                }
+              </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
