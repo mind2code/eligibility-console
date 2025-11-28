@@ -7,17 +7,28 @@ import {
   AutoRefreshTokenService,
   UserActivityService
 } from 'keycloak-angular';
+import { environment } from '../environments/environment';
+
+
+const appUrl = environment.appUrl; // ex: 'http://localhost:4200'
+
+// Échapper les caractères spéciaux pour éviter les problèmes dans le regex
+const escapedAppUrl = appUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Construire le regex
+const regex = new RegExp(`^(${escapedAppUrl})(\\/.*)?$`, 'i');
 
 const localhostCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:4200)(\/.*)?$/i
+  //urlPattern: /^(http:\/\/localhost:4200)(\/.*)?$/i
+  urlPattern: regex
 });
 
 export const provideKeycloakAngular = () =>
   provideKeycloak({
     config: {
-      realm: 'eligibility',
-      url: 'http://localhost:8080',
-      clientId: 'devportal'
+      realm: environment.keycloak.realm,
+      url: environment.keycloak.host,
+      clientId: environment.keycloak.clientId
     },
     initOptions: {
       onLoad: 'check-sso',

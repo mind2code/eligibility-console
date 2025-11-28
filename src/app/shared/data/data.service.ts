@@ -2612,183 +2612,109 @@ export class DataService {
   }
   public sideBar: SideBar[] =[
     {
-      tittle: 'Main',
+      tittle: 'Menu Principal',
       icon: 'airplay',
       showAsTab: true,
       separateRoute: false,
       menu: [
         {
-          menuValue: 'Tableau de bord',
-          hasSubRoute: true,
+          menuValue: 'Dashboard',
+          hasSubRoute: false,
           showSubRoute: false,
           icon: 'smart-home',
           base: 'dashboard',
           materialicons: 'start',
-          dot:false,
-          subMenus: [
-            {
-              menuValue: 'Admin Dashboard',
-              route: routes.index,
-              base: 'index',
-            },
-            {
-              menuValue: 'Employee Dashboard',
-              route: routes.employee,
-              base: 'employee',
-            },
-            {
-              menuValue: 'Deals Dashboard',
-              route: routes.dealsDashboard,
-              base: 'deals',
-            },
-            {
-              menuValue: 'Leads Dashboard',
-              route: routes.leadDashboard,
-              base: 'leads',
-            },
-          ],
+          subMenus: [],
         },
-        /*  {
-            menuValue: 'Gestion des clients',
-            route: routes.index,
-            hasSubRoute: true,
-            showSubRoute: false,
-            icon: 'user-star',
-            base: 'user-management',
-            materialicons: '',
-            subMenus: [
-              {
-                menuValue: 'Liste des utilisateurs',
-                route: routes.superAdminCompanies,
-                base: 'companies',
-              },
-              {
-                menuValue: 'Utilisateur ',
-                route: routes.superAdminSubscriptions,
-                base: 'subscriptions',
-              },
-              {
-                menuValue: 'Importer des compteurs',
-                route: routes.superAdminPackages,
-                base: 'packages',
-                base2: 'packages-grid',
-              },
-            ],
-          },
-          {
-            menuValue: 'Branchements',
-            route: routes.index,
-            hasSubRoute: true,
-            showSubRoute: false,
-            icon: 'user-star',
-            base: 'user-management',
-            materialicons: '',
-            subMenus: [
-              {
-                menuValue: 'Liste des utilisateurs',
-                route: routes.superAdminCompanies,
-                base: 'companies',
-              },
-              {
-                menuValue: 'Utilisateur ',
-                route: routes.superAdminSubscriptions,
-                base: 'subscriptions',
-              },
-              {
-                menuValue: 'Importer des compteurs',
-                route: routes.superAdminPackages,
-                base: 'packages',
-                base2: 'packages-grid',
-              },
-            ],
-          }, */
         {
           menuValue: 'Gestion des partenaires',
-          route: routes.apps,
-          hasSubRouteTwo: true,
+          route: routes.index,
+          hasSubRoute: false,
           showSubRoute: false,
-          icon: 'layout-grid-add',
-          base: 'application',
-          materialicons: 'dashboard',
+          icon: 'users',
+          base: 'super-admin',
+          materialicons: '',
           subMenus: [
-            {
-              menuValue: 'Lister',
-              route: routes.partners,
-              base: 'chats',
-              customSubmenuTwo: false,
-            },
-            {
-              menuValue: 'Recharge le compte',
-              hasSubRoute: true,
-              showSubRoute: false,
-              route: routes.partnerDeposit,
-              customSubmenuTwo: false,
-              base: 'email',
-            },
           ],
+        },
+        {
+          menuValue: 'Gestion des comptes',
+          route: routes.index,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'heart-handshake',
+          base: 'super-admin',
+          materialicons: '',
+          subMenus: [],
+        },
+        {
+          menuValue: 'Gestion des vendeurs',
+          route: routes.index,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'user-check',
+          base: 'super-admin',
+          materialicons: '',
+          subMenus: [],
         },
         {
           menuValue: 'Gestion des compteurs',
           route: routes.index,
-          hasSubRoute: true,
+          hasSubRoute: false,
           showSubRoute: false,
-          icon: 'user-star',
+          icon: 'hierarchy-2',
           base: 'super-admin',
           materialicons: '',
-          subMenus: [
-            {
-              menuValue: 'Recherche ...',
-              route: routes.deviceSearch,
-              base: 'chats',
-              customSubmenuTwo: false,
-            },
-            {
-              menuValue: 'Liste des compteurs',
-              route: routes.devices,
-              base: 'companies',
-            },
-            /*{
-              menuValue: 'Nouveau compteur',
-              route: routes.superAdminSubscriptions,
-              base: 'subscriptions',
-            }, */
-
-          ],
-        },
-        {
-          menuValue: 'Point de vente',
-          route: routes.index,
-          hasSubRoute: true,
-          showSubRoute: false,
-          icon: 'cash-register',
-          base: 'super-admin',
-          materialicons: '',
-          subMenus: [
-            {
-              menuValue: 'Vendre',
-              route: '/pos/vendre',
-              base: 'super-admin-dashboard',
-            },
-            {
-              menuValue: 'Liste des compteurs',
-              route: routes.devices,
-              base: 'companies',
-            },
-            {
-              menuValue: 'Nouveau compteur',
-              route: routes.superAdminSubscriptions,
-              base: 'subscriptions',
-            },
-            {
-              menuValue: 'Importer des compteurs',
-              route: routes.superAdminPackages,
-              base: 'packages',
-              base2: 'packages-grid',
-            },
-          ],
+          subMenus: [],
         },
       ],
     },
+    {
+      tittle: 'Consultations',
+      icon: 'airplay',
+      showAsTab: true,
+      separateRoute: false,
+      menu: [
+        {
+          menuValue: 'Transactions',
+          route: routes.index,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'cash',
+          base: 'super-admin',
+          materialicons: '',
+          subMenus: [],
+        },
+      ]
+    },
+    {
+      tittle: 'Administration',
+      icon: 'airplay',
+      showAsTab: true,
+      separateRoute: false,
+      menu: [
+        {
+          menuValue: 'Gestion des rôles',
+          route: routes.index,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'cash',
+          base: 'super-admin',
+          materialicons: '',
+          subMenus: [],
+        },
+        {
+          menuValue: 'Gestion des utilisateurs',
+          route: routes.index,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'cash',
+          base: 'super-admin',
+          materialicons: '',
+          subMenus: [],
+        },
+      ]
+    }
 
   ];
   public getSideBarData: BehaviorSubject<SideBar[]> = new BehaviorSubject<

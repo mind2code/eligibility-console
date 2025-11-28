@@ -7,17 +7,17 @@ const routes: Routes = [
     path: '',
     component: FeatureModuleComponent,
     children: [
-
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch:'full'
+      },
       {
         path: 'dashboard',
         loadChildren: () =>
           import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
-      { path: 'organisation', loadChildren: () => import('./organisation/organisation.module').then(m => m.OrganisationModule) },
-      { path: 'partners', loadChildren: () => import('./partners/partners.module').then(m => m.PartnersModule) },
-      { path: 'devices', loadChildren: () => import('./devices/devices.module').then(m => m.DevicesModule) },
-      { path: 'pos', loadChildren: () => import('./pos/pos.module').then(m => m.PosModule) },
-      ],
+    ],
   },
 ];
 
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FeatureModuleRoutingModule {}
+export class FeatureModuleRoutingModule { }

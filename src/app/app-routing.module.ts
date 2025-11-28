@@ -5,11 +5,11 @@ import {ForbiddenComponent} from "./shared/components/forbidden/forbidden.compon
 import {NotFoundComponent} from "./shared/components/not-found/not-found.component";
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full',
-  },
+  // {
+  //   path: '',
+  //   redirectTo: '/dashboard',
+  //   pathMatch: 'full',
+  // },
   {
     path: '',
     loadChildren: () =>
