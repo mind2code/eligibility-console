@@ -730,22 +730,7 @@ export class DataService {
               menuValue: 'Admin Dashboard',
               route: routes.index,
               base: 'index',
-            },
-            {
-              menuValue: 'Employee Dashboard',
-              route: routes.employee,
-              base: 'employee',
-            },
-            {
-              menuValue: 'Deals Dashboard',
-              route: routes.dealsDashboard,
-              base: 'deals',
-            },
-            {
-              menuValue: 'Leads Dashboard',
-              route: routes.leadDashboard,
-              base: 'leads',
-            },
+            }
           ],
         },
         {
@@ -1883,12 +1868,12 @@ export class DataService {
               hasSubRoute: true,
               showSubRoute: false,
               customSubmenuTwo: true,
-              base: 'blog',
+              base: 'blogs',
               subMenusTwo: [
                 {
                   menuValue: 'All Blogs',
                   route: routes.allBlogs,
-                  base: 'All Blogs',
+                  base: 'all-blogs',
                 },
                 {
                   menuValue: 'Categories',
@@ -2402,11 +2387,7 @@ export class DataService {
                   route: routes.apexChart,
                   base: 'apex-charts',
                 },
-                {
-                  menuValue: 'Ng2 Charts',
-                  route: routes.ngTwoCharts,
-                  base: 'ng2-charts',
-                },
+                
                 {
                   menuValue: 'Prime NG Charts',
                   route: routes.chartPrime,
@@ -2619,20 +2600,21 @@ export class DataService {
       menu: [
         {
           menuValue: 'Dashboard',
+          route: routes.index,
           hasSubRoute: false,
           showSubRoute: false,
           icon: 'smart-home',
-          base: 'dashboard',
+          base: 'index',
           materialicons: 'start',
           subMenus: [],
         },
         {
           menuValue: 'Gestion des partenaires',
-          route: routes.index,
+          route: routes.partenaireList,
           hasSubRoute: false,
           showSubRoute: false,
           icon: 'users',
-          base: 'super-admin',
+          base: 'liste-partenaires',
           materialicons: '',
           subMenus: [
           ],
@@ -2698,7 +2680,7 @@ export class DataService {
           route: routes.index,
           hasSubRoute: false,
           showSubRoute: false,
-          icon: 'cash',
+          icon: 'airplay',
           base: 'super-admin',
           materialicons: '',
           subMenus: [],
@@ -2708,7 +2690,7 @@ export class DataService {
           route: routes.index,
           hasSubRoute: false,
           showSubRoute: false,
-          icon: 'cash',
+          icon: 'users',
           base: 'super-admin',
           materialicons: '',
           subMenus: [],
@@ -3908,18 +3890,22 @@ export class DataService {
             {
               menuValue: 'Login',
               customSubmenuTwo: true,
+              base:'login',
               subMenusTwo: [
                 {
                   menuValue: 'Cover',
                   route: '/login',
+                  base:'login',
                 },
                 {
                   menuValue: 'Illustration',
                   route: '/login-2',
+                  base:'login-2',
                 },
                 {
                   menuValue: 'Basic',
                   route: '/login-3',
+                  base:'login-3',
                 },
               ],
             },
@@ -4291,11 +4277,7 @@ export class DataService {
                   route: routes.apexChart,
                   base: 'apex-charts',
                 },
-                {
-                  menuValue: 'Ng2 Charts',
-                  route: routes.ngTwoCharts,
-                  base: 'ng2-charts',
-                },
+                
                 {
                   menuValue: 'Prime NG Charts',
                   route: routes.chartPrime,

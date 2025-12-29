@@ -55,6 +55,6 @@
           "Answers": "Assign a ticket by selecting the ticket from the queue, choosing the team member",
           "Categories": "Tickets"
         }
-       ],
-    "totaldata":11
+       ], 
+    "totalData":11
 }

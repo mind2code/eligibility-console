@@ -6611,7 +6611,14 @@ body {
                 border-color: variables.$darkmode-gray-200 !important;
             }
         }
-        
+        &.header-two {
+            .dark-logo {
+                display: block;
+            }
+            .logo {
+                display: none;
+            }
+        }
     }
     .head-icons a{
         background: variables.$darkmode-white;
@@ -8062,7 +8069,36 @@ body {
         border: $border-color;
 
     }
+    .modal .modal-header .btn-close {
+        color: variables.$darkmode-gray-900;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    .modal-content {
+        color: variables.$text-muted;
+    }
+    .nav-tabs {
+        @include mixins.respond-below(md){
+            background: transparent;
+            border: 1px solid transparent;
+        }
+    }
+    .nav-pills .dropdown-toggle {
+        color: variables.$darkmode-gray-900;
+        transition: all 0.9s;
+        &:hover {
+            color: variables.$primary;
+        }
+    }
+    .datepicker .next::after,
+    .datepicker .prev::after {
+        color: variables.$darkmode-dark;
+    }
+    .datepicker table tr td.selected, .datepicker table tr td.selected:hover, .datepicker table tr td.range.day {
+        background: variables.$darkmode-light;
+        color: variables.$darkmode-gray-900;
+    }
 }
+
 
 [data-theme="dark"] {
     .breadcrumb .breadcrumb-item.active {
@@ -8138,5 +8174,8 @@ body {
         .fc-daygrid .fc-scrollgrid {
             border-color: variables.$darkmode-gray-200;
         }
+    }
+    .note-editable{
+        color:variables.$darkmode-dark;
     }
 }

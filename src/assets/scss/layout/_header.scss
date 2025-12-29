@@ -507,9 +507,7 @@
                             &.active{
                                 color: variables.$white;
                             }
-                            &.active,&:hover{
-                                background: #F7F7F7  no-repeat calc(100% - 12px) center;
-                            }
+                           
                         }
                         a{
                             img{

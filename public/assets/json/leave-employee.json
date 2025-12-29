@@ -100,7 +100,6 @@
           "NoOfDays": "2 Days",
           "Status": "New"
         }
-       ]
-       ,
-    "totaldata":10
+       ],
+       "totalData":10
 }

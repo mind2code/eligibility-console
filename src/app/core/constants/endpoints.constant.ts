@@ -1,5 +1,6 @@
-export const url_paths = {
-    PARTENAIRES: 'partner',
-    COMPTES: 'accounts',
-    COMPTEURS:'devices',
+export const url_path = {
+    PARTENAIRES: '/partners',
+    PARTENAIRES_PARAMS: '/partner-param',
+    COMPTES: '/accounts',
+    COMPTEURS:'/devices',
 }

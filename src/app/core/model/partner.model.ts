@@ -7,6 +7,7 @@ export type Partner = {
   phone: string;
   accountNumber: string;
   balance: number;
+  active: boolean;
   dateCreation: Date;
 
 }

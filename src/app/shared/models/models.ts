@@ -250,7 +250,7 @@ export interface SideBarMenu {
   hasSubRouteTwo?: boolean;
   page1?: string;
 }
-export interface BreadCrumbItems {
+export interface breadCrumbItems {
   label: string;
   active?: boolean;
 }

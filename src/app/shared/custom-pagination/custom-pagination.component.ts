@@ -6,12 +6,14 @@ import {
   PaginationService,
 } from './pagination.service';
 import { routes } from '../routes/routes';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-custom-pagination',
     templateUrl: './custom-pagination.component.html',
     styleUrls: ['./custom-pagination.component.scss'],
-    standalone: false
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class CustomPaginationComponent {
   public routes = routes;

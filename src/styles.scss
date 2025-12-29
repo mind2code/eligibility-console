@@ -6,19 +6,19 @@
 // @import '@fontsource/inter/variable.css';
 
 
-.offcanvas-body{
-  height: 100vh !important;;
-}
-// .ng-scroll-content {
-//   height: 100vh;
-// }
-.ng-scroll-viewport[_nghost-ng-c299950523] > .ng-scroll-content[_ngcontent-ng-c299950523], .ng-scrollbar-external-viewport[_nghost-ng-c299950523] .ng-scroll-viewport>.ng-scroll-content {
-  width: unset !important;
-  z-index: 1;
-  min-width: 100%;
-  min-height: 100%;
-  contain: unset !important;
-  padding: var(--_viewport-padding-top, 0) var(--_viewport-padding-right, 0) var(--_viewport-padding-bottom, 0) var(--_viewport-padding-left, 0);
+  .offcanvas-body{
+    height: 100vh !important;;
+  }
+  // .ng-scroll-content {
+  //   height: 100vh;
+  // }
+  .ng-scroll-viewport[_nghost-ng-c299950523] > .ng-scroll-content[_ngcontent-ng-c299950523], .ng-scrollbar-external-viewport[_nghost-ng-c299950523] .ng-scroll-viewport>.ng-scroll-content {
+    width: unset !important;
+    z-index: 1;
+    min-width: 100%;
+    min-height: 100%;
+    contain: unset !important;
+    padding: var(--_viewport-padding-top, 0) var(--_viewport-padding-right, 0) var(--_viewport-padding-bottom, 0) var(--_viewport-padding-left, 0);
 }
 .welcome-content {
   height:100vh !important;
@@ -185,7 +185,7 @@ cdk-virtual-scroll-viewport {
 .theme-green .bs-datepicker-body table td.selected span,
 .theme-green .bs-datepicker-body table td span[class*=select-]:after,
 .theme-green .bs-datepicker-body table td[class*=select-] span:after {
-  background-color: #F26522;
+    background-color: #F26522;
 }
 .mat-mdc-option {
   .mdc-list-item__primary-text{
@@ -200,12 +200,12 @@ div.mat-mdc-select-panel .mat-mdc-option{
   line-height: 1.5 !important;
 }
 .mat-mdc-select-placeholder,.mat-mdc-select-value-text {
-  color:  #111827  !important;
-  margin-right: 5px;
-  font-size: 14px;
-  font-weight: 400;
-  font-family: "Roboto", sans-serif;
-  letter-spacing: normal;
+ color:  #111827  !important;
+ margin-right: 5px;
+ font-size: 14px;
+    font-weight: 400;
+    font-family: "Roboto", sans-serif;
+    letter-spacing: normal;
 }
 app-admin .table tbody tr td {
   color: #72767D;
@@ -213,12 +213,12 @@ app-admin .table tbody tr td {
 }
 .circle-progress{
   width: 38px;
-  height: 38px !important;
-  float: left;
-  line-height: 38px;
-  background: none;
-  box-shadow: none;
-  position: relative;
+    height: 38px !important;
+    float: left;
+    line-height: 38px;
+    background: none;
+    box-shadow: none;
+    position: relative;
 }
 
 // .progress-left, .progress-right {
@@ -262,15 +262,15 @@ app-admin .dataTables_filter{
   margin-bottom: auto !important;
 }
 @media (max-width: 767.98px) {
-  .dataTables_filter {
-    text-align: center !important;
-    margin: 15px 0;
+.dataTables_filter {
+      text-align: center !important;
+      margin: 15px 0;
   }
 }
 @media (max-width: 767.98px) {
   .table-responsive {
-    margin-top: 15px;
-  }
+        margin-top: 15px;
+    }
 }
 
 
@@ -292,24 +292,24 @@ table.mat-sort {
   }
 }
 
-.mat-sort-header-container {
-  .mat-sort-header-arrow::after{
-    content: "\2193";
-    right: 0.5rem;
-    left: 0rem;
-    display: flex;
-    align-items: center;
-    color:#A1A4A9;
+    .mat-sort-header-container {
+    .mat-sort-header-arrow::after{
+      content: "\2193";
+      right: 0.5rem;
+      left: 0rem;
+      display: flex;
+      align-items: center;
+      color:#A1A4A9;
+    }
   }
-}
-.mat-sort-header-indicator{
-  display: none !important;
-}
-.mat-sort-header-arrow {
-  opacity: 0.5 !important;
-}
-app-admin .page-wrapper .content {
-  transition: background-color 0.3s, color 0.3s;
+  .mat-sort-header-indicator{
+    display: none !important;
+  }
+  .mat-sort-header-arrow {
+    opacity: 0.5 !important;
+  }
+  app-admin .page-wrapper .content {
+    transition: background-color 0.3s, color 0.3s;
 }
 .submenu-hdr {
   font-weight: 600;
@@ -326,7 +326,7 @@ app-admin .page-wrapper .content {
     .sidebar{
       .submenu-hdr {
         font-size: 0;
-      }
+    }
     }
   }
 
@@ -398,65 +398,192 @@ a.feather-size {
 .login-form .main-wrapper {
   justify-content: center;
 }
+.primary-color-popover .popover-title.popover-header,
+.primary-background-popover {
+  background-color: #F26522 !important;
+  color: #ffffff !important;
+}
+
+.secondary-color-popover .popover-title.popover-header,
+.secondary-background-popover {
+  background-color: #092C4C !important;
+  color: #ffffff !important;
+}
+
+.info-color-popover .popover-title.popover-header,
+.info-background-popover {
+  background-color: #17a2b8 !important;
+  color: #ffffff !important;
+}
+
+.warning-color-popover .popover-title.popover-header,
+.warning-background-popover {
+  background-color: #FF9900 !important;
+  color: #ffffff !important;
+}
+
+.success-color-popover .popover-title.popover-header,
+.success-background-popover {
+  background-color: #28C76F !important;
+  color: #ffffff !important;
+}
+
+.danger-color-popover .popover-title.popover-header,
+.danger-background-popover {
+  background-color: #FF0000 !important;
+  color: #ffffff !important;
+}
+
+popover-container.popover .popover-header {
+  background-color: inherit;
+ }
+
+.teal-background-popover {
+  background-color: #02a8b5 !important;
+  color: #ffffff !important;
+}
+
+.purple-background-popover {
+  background-color: #7367F0 !important;
+  color: #ffffff !important;
+}
+
+.popover .popover-content.popover-body {
+  color: inherit;
+}
+
+.primary-light-popover {
+  background-color: #F265221A !important;
+  color: #FF9900 !important;
+}
+
+.secondary-light-popover {
+  background-color: #E6E9ED !important;
+  color: #092C4C !important;
+}
+
+.info-light-popover {
+  background-color: #E7F6F8 !important;
+  color: #17a2b8 !important;
+}
+
+.warning-light-popover {
+  background-color: #FFF5EC !important;
+  color: #FF9900 !important;
+}
+
+.success-light-popover {
+  background-color: #E9F9F0 !important;
+  color: #28C76F !important;
+}
+
+.danger-light-popover {
+  background-color: #FFE5E5 !important;
+  color: #FF0000 !important;
+}
+
+.custom-popover {
+  position: relative;
+}
 [data-theme="dark"] {
-  div.mat-mdc-select-panel.mat-mdc-select-panel {
-    background-color: #0a0a0a;
-  }
-  mat-option.mat-mdc-option.mdc-list-item {
-    background-color: #141432;
-  }
-  mat-option.mat-mdc-option .mdc-list-item__primary-text {
-    color: #97a2d2;
-  }
-  .mat-mdc-select-placeholder {
-    color: #D8DFEB !important
-  }
-  .mat-mdc-select-arrow{
-    color: #434952;
-  }
-  mat-select.custom-mat-select .mat-mdc-select-trigger{
-    border: 1px solid #222224 !important;
-  }
-  .bs-datepicker{
-    box-shadow: none;
-  }
-  .bs-datepicker-container{
-    background-color: #141432;
-  }
-  .dataTables_length label .custom-select{
-    border: 1px solid #222224 !important;
-  }
-  .no-sort .checkmarks{
-    background-color: #0D0D0D;
-  }
-  .checkboxs input ~ .checkmarks{
-    border: 1px solid #222224 !important;
-  }
-  .pagination{
-    .page-item{
-      background-color: #141432;
+    mwl-calendar-month-view-header{
+    .cal-header{
+      background: #0D0D0D;
+      border-color: #202A36;
     }
   }
-  app-admin .ProseMirror{
-    background-color: #0D0D0D;
+  .cal-days{
+    background: #0D0D0D;
+      border-color: #202A36;
   }
-  .NgxEditor__MenuBar{
-    background-color: #0D0D0D !important;
-    border: 1px solid #222224 !important;
+  .cal-month-view .cal-day-cell:not(:last-child) {
+    border-right-color: #6c6b6b;
   }
-  .summer-group{
-    border: 1px solid #222224 !important;
+  .cal-month-view .cal-days .cal-cell-row {
+    border-bottom-color: #6c6b6b;
+}
+    tag-input{
+    border: 1px solid #0a0a0a;
+    background-color: #0a0a0a;
+    delete-icon[_nghost-ng-c1802487489]{
+      height: 28px;
+    }
+    tag-ripple{
+      background-color: #ffffff;
+    }
+    tag-input-form{
+      input{
+  
+        background-color: #0a0a0a;
+      }
+    }
+    .tag__text{
+      font-size: 10px;
+    }
+    .ng2-tag-input[_ngcontent-ng-c2477436759] {
+      border-bottom: 2px solid #404954;
   }
-  .sidebar {
-    .sidebar-menu {
-      > ul {
-        li {
-          &.submenu {
-            ul {
-              li {
-                a {
-                  color: #D8DFEB !important;
-                }
+}
+  div.mat-mdc-select-panel.mat-mdc-select-panel {
+    background-color: #0a0a0a;
+ }
+ mat-option.mat-mdc-option.mdc-list-item {
+  background-color: #141432;
+}
+mat-option.mat-mdc-option .mdc-list-item__primary-text {
+  color: #97a2d2;
+}
+.mat-mdc-select-placeholder {
+  color: #D8DFEB !important
+}
+.mat-mdc-select-arrow{
+  color: #434952;
+}
+mat-select.custom-mat-select .mat-mdc-select-trigger{
+  border: 1px solid #222224 !important;
+}
+.bs-datepicker{
+  box-shadow: none;
+}
+.bs-datepicker-container{
+  background-color:#0D0D0D;
+}
+.bs-datepicker-body {
+  border:1px solid #0D0D0D;
+}
+.dataTables_length label .custom-select{
+  border: 1px solid #222224 !important;
+}
+.no-sort .checkmarks{
+  background-color: #0D0D0D;
+}
+.checkboxs input ~ .checkmarks{
+  border: 1px solid #222224 !important;
+}
+.pagination{
+  .page-item{
+    background-color: #141432;
+  }
+}
+app-admin .ProseMirror{
+  background-color: #0D0D0D;
+}
+.NgxEditor__MenuBar{
+  background-color: #0D0D0D !important;
+  border: 1px solid #222224 !important;
+}
+.summer-group{
+  border: 1px solid #222224 !important;
+}
+.sidebar {
+  .sidebar-menu {
+    > ul {
+      li {
+        &.submenu {
+          ul {
+            li {
+              a {
+                color: #D8DFEB !important;
               }
             }
           }
@@ -464,6 +591,7 @@ a.feather-size {
       }
     }
   }
+}
 
 }
 .pass-input{
@@ -594,15 +722,15 @@ div.dataTables_wrapper div.dataTables_filter {
 }
 .p-chips {
   border: 1px solid #E5E7EB;
-  color: #6B7280;
-  background-color: #ffffff;
-  font-size: 15px;
-  font-weight: 400;
-  border-radius: 5px;
-  height: 38px;
-  box-shadow: none;
-  overflow-y: auto;
-  width: 100%;
+    color: #6B7280;
+    background-color: #ffffff;
+    font-size: 15px;
+    font-weight: 400;
+    border-radius: 5px;
+    height: 38px;
+    box-shadow: none;
+    overflow-y: auto;
+    width: 100%;
 }
 .p-chips .p-chips-multiple-container .p-chips-token {
   padding: 0 5px;
@@ -615,7 +743,7 @@ div.dataTables_wrapper div.dataTables_filter {
 .p-chips .p-chips-multiple-container .p-chips-input-token input {
   font-size: 14px !important;
 }
-.light-box {
+ .light-box {
   justify-content: start;
   display: flex;
   gap: 16px;
@@ -691,7 +819,7 @@ span.p-chips-token-label {
 }
 
 .img-mat-select-mat-chip
-.mdc-evolution-chip__text-label.mat-mdc-chip-action-label {
+  .mdc-evolution-chip__text-label.mat-mdc-chip-action-label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -701,7 +829,7 @@ span.p-chips-token-label {
 mat-option.img-mat-select-mat-chip-options.mat-mdc-option.mdc-list-item--selected:not(
     .mdc-list-item--disabled
   )
-.mdc-list-item__primary-text {
+  .mdc-list-item__primary-text {
   color: inherit;
 }
 
@@ -955,15 +1083,16 @@ mat-select.custom-mat-select.img-mat-select-mat-chip .mat-mdc-select-trigger {
     background: white;
   }
   .slimscroll{
-    height: calc(100vh - 216px) !important;
-    overflow: hidden;
-    overflow-y: auto;
+      height: calc(100vh - 216px) !important;
+      overflow: hidden;
+      overflow-y: auto;
   }
 }
 .p-timepicker {
+
   chevrondownicon {
     &.p-element.p-icon-wrapper svg {
-      margin-left: auto ;
+    margin-left: auto ;
     }
   }
 }
@@ -982,7 +1111,7 @@ mat-select.custom-mat-select.img-mat-select-mat-chip .mat-mdc-select-trigger {
   }
   .p-datepicker table td {
     padding: 2px;
-  }
+}
   .p-datepicker table td > span {
     width: 26px;
     height: 26px;
@@ -1058,16 +1187,16 @@ mat-slider {
 .timepick{
   .p-inputtext {
     border-color: #E5E7EB;
-  }
-  .p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext {
-    box-shadow: none;
-  }
-  .p-calendar .p-datepicker{
-    min-width: 0px
-  }
-  .p-calendar placeholder{
-    color: #111827;
-  }
+}
+.p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext {
+  box-shadow: none;
+}
+.p-calendar .p-datepicker{
+  min-width: 0px
+}
+.p-calendar placeholder{
+  color: #111827;
+}
 }
 .ngx-dates {
   bs-datepicker-container {
@@ -1090,7 +1219,52 @@ mat-slider {
 .p-stepper-separator{
   background: #F26522 ;
 }
+p-calendar{
+  width: 100%;
+  display: inline-flex;
+  span{
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #E2E4E6;
+    background: #ffffff;
+    .p-inputtext {
+      padding: 5px;
+    }
+  }
+}
+.p-datepicker-time-picker {
+    padding: .5rem;
+    background: #fff;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    padding: 20px !important;
+    justify-content: space-around !important;
+}
+.p-colorpicker input{
+  width: 50px;
+    height: 50px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+p-datepicker {
+    input{
+    border: 1px solid #dee2e6 !important;
+    border-radius: 5px !important;
+    padding-left: 8px !important;
+  }
+}
+.custom-time{
+  input{
+    border:none !important
+  }
+}
 [data-theme="dark"]{
+  .p-datepicker-time-picker{
+    background-color: #0D0D0D;
+    border-color:#0D0D0D;
+    color:#D8DFEE;
+  }
   .p-chips{
     border: 1px solid #1F2228;
   }
@@ -1106,47 +1280,47 @@ mat-slider {
   }
   .p-datepicker table th > span {
     color: #D8DFEE;
-  }
-  .p-inlines .p-datepicker table td{
-    color: #777;
-  }
-  .NgxEditor__Content{
-    background: #0D0D0D;
-    border: 1px solid #1F2228
-  }
-  .p-chips ul{
-    background: #0D0D0D;
-    border: 1px solid #1F2228
-  }
-  .p-stepper .p-stepper-header .p-stepper-action{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-  }
-  .p-stepper-title{
-    color: #D8DFEE;
-  }
-  .p-stepper-panels{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-  }
-  .p-element[_ngcontent-ng-c1554889767]{
+}
+.p-inlines .p-datepicker table td{
+  color: #777;
+}
+.NgxEditor__Content{
+  background: #0D0D0D;
+  border: 1px solid #1F2228
+}
+.p-chips ul{
+  background: #0D0D0D;
+  border: 1px solid #1F2228
+}
+.p-stepper .p-stepper-header .p-stepper-action{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+}
+.p-stepper-title{
+  color: #D8DFEE;
+}
+.p-stepper-panels{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+}
+.p-element[_ngcontent-ng-c1554889767]{
     border-radius: 5px;
-  }
-  .timepick .p-inputtext{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-  }
-  .col-form-label{
-    color: #D8DFEE;
-  }
+}
+.timepick .p-inputtext{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+}
+.col-form-label{
+  color: #D8DFEE;
+}
   .basic-box[_ngcontent-ng-c2935039459]{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-    color: #D8DFEE;
-    box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
-    &:hover{
-      box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
-    }
+      background: #0D0D0D;
+      border: 1px solid #1F2228;
+      color: #D8DFEE;
+      box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
+      &:hover{
+        box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
+      }
   }
   .example-box1[_ngcontent-ng-c2935039459]{
     background: #0D0D0D;
@@ -1156,41 +1330,120 @@ mat-slider {
     &:hover{
       box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
     }
+}
+.example-box2[_ngcontent-ng-c2935039459]{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+  color: #D8DFEE;
+  box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
+  &:hover{
+    box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
   }
-  .example-box2[_ngcontent-ng-c2935039459]{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-    color: #D8DFEE;
-    box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
-    &:hover{
-      box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
+}
+.example-box3[_ngcontent-ng-c2935039459]{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+  color: #D8DFEE;
+  box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
+  &:hover{
+    box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
+  }
+}
+.example-box4[_ngcontent-ng-c2935039459]{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+  color: #D8DFEE;
+  box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
+  &:hover{
+    box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
+  }
+}
+.example-box5[_ngcontent-ng-c2935039459]{
+  background: #0D0D0D;
+  border: 1px solid #1F2228;
+  color: #D8DFEE;
+  box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
+  &:hover{
+    box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
+  }
+}
+}
+
+.prime-cal {
+  .p-datepicker-panel {
+    position: relative !important;
+  }
+  p-calendar{
+    position: relative;
+    overflow: auto;
+    height: 200px;
+     .p-iconwrapper svg{
+    background-color: white ;
+    border: none;
+  }
+  }
+ 
+}
+
+table.mat-sort .mat-sort-header-container .mat-sort-header-arrow:before,.mat-sort-header-container .mat-sort-header-arrow:after{
+  display: none;
+}
+.p-element.p-inputwrapper.form-control{
+  overflow-y: auto;
+}
+.p-chip-remove-icon{
+  margin-left: 4px;
+    padding-top: 2px;
+}
+.p-chips-token-icon.p-icon{
+  height: 10px;
+  font-weight: 500;
+}
+.p-inputchips-chip.p-chip.p-component{
+     background: #E8E9EA;
+    border-radius: 5px;
+    padding: 0 5px;
+    font-size: 10px;
+    color: #212529;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+}
+tag-input{
+  height: 40px;
+  overflow: hidden;
+  overflow-y: auto;
+  border: 1px solid #E6EAED;
+  border-radius: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  background-color: #F7F8F9;
+  delete-icon[_nghost-ng-c1802487489]{
+    height: 28px;
+  }
+  tag {
+    border-radius: 4px !important;
+    
+  }
+  tag-ripple{
+    background-color: #e8e9ea;
+  }
+  tag-input-form{
+    input{
+
+      background-color: #ffffff;
     }
   }
-  .example-box3[_ngcontent-ng-c2935039459]{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-    color: #D8DFEE;
-    box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
-    &:hover{
-      box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
-    }
+  .tag__text{
+    font-size: 10px;
   }
-  .example-box4[_ngcontent-ng-c2935039459]{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-    color: #D8DFEE;
-    box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
-    &:hover{
-      box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
-    }
-  }
-  .example-box5[_ngcontent-ng-c2935039459]{
-    background: #0D0D0D;
-    border: 1px solid #1F2228;
-    color: #D8DFEE;
-    box-shadow: 0px 1px 5px 1px rgb(243, 243, 243);
-    &:hover{
-      box-shadow: 0px 4px 54px 0px rgba(224, 224, 224, 0.2509803922);
-    }
+
+}
+.p-button-icon-only.p-button-rounded {
+  width: 20px;
+  height: 20px !important;
+}
+.custom-daterange-picker{
+  .bs-datepicker{
+    right:200px
   }
 }

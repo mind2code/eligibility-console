@@ -1,29 +1,51 @@
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {inject, Injectable} from "@angular/core";
-import {firstValueFrom, Observable} from "rxjs";
-import {Partner} from "../model/partner.model";
-import {ApiPaginatedResponse} from "../shared/models/api-response.model";
-import Keycloak from "keycloak-js";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { url_path } from "../constants/endpoints.constant";
+import { Partner } from "../model/partner.model";
+import { ApiRequestService } from "./globals/api-request.service";
+import { ApiPaginatedResponse } from "../model/api-response.model";
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartnerService {
 
-  //keycloak = inject(Keycloak);
+  constructor(private _apiRequestService: ApiRequestService) {
+  }
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      //'Authorization': 'Bearer ' + this.keycloak.token
-    }),
-  };
+  getAll() {
+    return this._apiRequestService.getAll(url_path.PARTENAIRES + '/all');
+  }
 
-  constructor(private http: HttpClient) {}
+  getAllByPage(paginationData: any): Observable<ApiPaginatedResponse<Partner>> {
+    return this._apiRequestService.getByPage({ endpoint: url_path.PARTENAIRES, paginationData: paginationData });
+  }
 
-  async getAll() {
-      const response = await firstValueFrom(this.http.get<ApiPaginatedResponse<Partner>>("/api/v1/partners", this.httpOptions));
-      return response?.content;
+  getById(id: number) {
+    return this._apiRequestService.getById(url_path.PARTENAIRES + '/' + id);
+  }
+  getByLogin(login: string) {
+    return this._apiRequestService.getById(url_path.PARTENAIRES + '/' + login + '/details');
+  }
+
+  getSolde() {
+    return this._apiRequestService.getById(url_path.PARTENAIRES + '/solde');
+  }
+
+  save(data: Partner) {
+    return this._apiRequestService.post({ endpoint: url_path.PARTENAIRES, data: JSON.stringify(data) })
+  }
+
+  update(id?: string, data?: any) {
+    return this._apiRequestService.put({ endpoint: url_path.PARTENAIRES + '/' + id, data: JSON.stringify(data) })
+  }
+
+  updateStatus(id: string, status: boolean) {
+    return this._apiRequestService.put({ endpoint: url_path.PARTENAIRES + '/update-status/' + id, data: JSON.stringify({ status: status }) })
+  }
+
+  delete(id: string) {
+    return this._apiRequestService.delete(url_path.PARTENAIRES + "/" + id)
   }
 }
 
