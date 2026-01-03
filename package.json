@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^20.1.4",
     "@angular/router": "^20.1.4",
     "@fontsource/inter": "^5.1.0",
+    "@ng-select/ng-select": "^20.7.0",
     "angular-calendar": "0.31.1",
     "apexcharts": "^5.3.2",
     "bootstrap": "^5.3.7",

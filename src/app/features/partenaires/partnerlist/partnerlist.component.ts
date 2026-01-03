@@ -21,10 +21,12 @@ import { ToastService } from '../../../core/service/globals/toast.service';
 import { PartnerParamService } from '../../../core/service/partner-param.service';
 import { PartnerParamRequest } from '../../../core/model/dto/partner-param-request.model';
 import { PartnerParam } from '../../../core/model/partner-param.model';
+import { NgxMaskDirective } from "ngx-mask";
+import { AccountService } from '../../../core/service/account.service';
 
 @Component({
   selector: 'app-partnerlist',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, FooterComponent, ModalModule],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, FooterComponent, ModalModule, NgxMaskDirective],
   templateUrl: './partnerlist.component.html',
   styleUrl: './partnerlist.component.scss',
   providers: [BsModalService]
@@ -59,6 +61,9 @@ export class PartnerlistComponent {
   paramForm!: FormGroup
   parameters: PartnerParam[] = [];
 
+  //Form pour rechargement credit
+  formCredit!: FormGroup;
+
   modalRef?: BsModalRef;
   config: any = {
     backdrop: true,
@@ -71,7 +76,8 @@ export class PartnerlistComponent {
     private _fb: FormBuilder,
     private modalService: BsModalService,
     private toastService: ToastService,
-    private _partnerParamService: PartnerParamService
+    private _partnerParamService: PartnerParamService,
+    private _accountService: AccountService
   ) {
     this.breadCrumbItems = [
       { label: 'Partenaire' },
@@ -99,6 +105,13 @@ export class PartnerlistComponent {
     this.paramForm = this._fb.group({
       partnerId: [null, Validators.required],
       params: this._fb.array([this.initParam(), this.initParam()])
+    });
+
+    // Form for credit recharge
+    this.formCredit = this._fb.group({
+      partnerId: [null, Validators.required],
+      montant: [500, [Validators.required, Validators.min(500)]],
+      description: ['']
     });
   }
 
@@ -266,7 +279,7 @@ export class PartnerlistComponent {
         this.parameters = response.data;
 
         //Chargement des champs avec les valeurs récupérées
-        if(this.parameters.length != 0) this.clearParamForm(false, false);
+        if (this.parameters.length != 0) this.clearParamForm(false, false);
         else this.clearParamForm(false, true); // if no parameters, initialize with two empty fields
         this.parameters.forEach(param => {
           this.params.push(this._fb.group({
@@ -396,6 +409,45 @@ export class PartnerlistComponent {
 
   /** Open parameters modal **/
   openParamModal(template: any) {
+    this.clearParamForm();
+    this.modalRef = this.modalService.show(template, { backdrop: true, ignoreBackdropClick: true, class: 'modal-md modal-dialog-centered' });
+  }
+
+  creditAccount() {
+    if (this.formCredit.valid) {
+
+      this.changeFormElement();
+
+      // For now we just log the value - you can replace this with an API call
+      console.log('Parameters saved', this.formCredit.value);
+
+      const amount = this.formCredit.value.montant;
+      const description = this.formCredit.value.description;
+      const partnerId = this.formCredit.value.partnerId;
+
+      let accountNumber = this.partenaires.filter(partner => partner.id == partnerId)[0].accountNumber ?? ''
+
+      this._accountService.recharger(accountNumber, { 'amount': amount, 'description': description }).subscribe({
+        next: (response) => {
+          console.log('Parameter saved:', response);
+
+          this.toastService.success('Succès', 'Paramètres enregistrés avec succès.').onHidden.subscribe(() => {
+            this.modalRef?.hide();
+            this.initFormElement(true)
+          });
+        },
+        error: (error) => {
+          console.error('Error saving parameter:', error);
+          this.toastService.error('Erreur', "Une erreur est survenue lors de l'enregistrement des paramètres.");
+        }
+      });
+
+    } else {
+      this.paramForm.markAllAsTouched();
+    }
+  }
+
+  openCreditModal(template: any) {
     this.clearParamForm();
     this.modalRef = this.modalService.show(template, { backdrop: true, ignoreBackdropClick: true, class: 'modal-md modal-dialog-centered' });
   }

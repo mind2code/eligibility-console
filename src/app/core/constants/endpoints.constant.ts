@@ -3,4 +3,6 @@ export const url_path = {
     PARTENAIRES_PARAMS: '/partner-param',
     COMPTES: '/accounts',
     COMPTEURS:'/devices',
+    VENDEURS:'/vendeur',
+    UTILISATEURS:'/keycloak',
 }

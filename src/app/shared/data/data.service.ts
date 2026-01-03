@@ -2619,19 +2619,19 @@ export class DataService {
           subMenus: [
           ],
         },
-        {
+        /*{
           menuValue: 'Gestion des comptes',
-          route: routes.index,
+          route: routes.compteList,
           hasSubRoute: false,
           showSubRoute: false,
           icon: 'heart-handshake',
-          base: 'super-admin',
+          base: 'liste-comptes',
           materialicons: '',
           subMenus: [],
-        },
+        },*/
         {
           menuValue: 'Gestion des vendeurs',
-          route: routes.index,
+          route: routes.vendeurList,
           hasSubRoute: false,
           showSubRoute: false,
           icon: 'user-check',

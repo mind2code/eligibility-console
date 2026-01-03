@@ -9,5 +9,4 @@ export type Partner = {
   balance: number;
   active: boolean;
   dateCreation: Date;
-
 }

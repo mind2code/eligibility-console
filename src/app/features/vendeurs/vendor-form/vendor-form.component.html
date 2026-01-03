@@ -1,0 +1,313 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des vendeurs"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
+              <i class="ti ti-file-export me-1"></i>Export
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Exporter en PDF</a
+                >
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Exporter en Excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-2">
+          <a class="btn btn-primary d-flex align-items-center"
+            ><i class="ti ti-circle-plus me-2"></i>Liste Vendeurs</a
+          >
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Formulaire des Vendeurs</h5>
+        <div
+          class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
+        ></div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body border-bottom">
+                <h5>
+                  Les champs marqués <span class="text-danger">*</span>sont
+                  obligatoires
+                </h5>
+              </div>
+              <div class="card-body">
+                <!-- <alert
+                  [hidden]="!showErrorPanel"
+                  type="danger"
+                  [dismissible]="true"
+                  role="alert"
+                >
+                  {{ errorMsg }}
+                </alert> -->
+                <form [formGroup]="vendorForm" (ngSubmit)="saveVendor()">
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="nom">Code </label>
+                      <input
+                        type="text"
+                        id="code"
+                        class="form-control"
+                        formControlName="code"
+                        placeholder="Ex: 0000"
+                      />
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="nom"
+                        >Nom <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="nom"
+                        class="form-control"
+                        formControlName="nom"
+                        required
+                        placeholder="Ex: DOE"
+                        [ngClass]="{
+                          'is-invalid':
+                            vendorForm.get('nom')?.invalid &&
+                            vendorForm.get('nom')?.touched,
+                          'is-valid':
+                            vendorForm.get('nom')?.valid &&
+                            vendorForm.get('nom')?.touched
+                        }"
+                      />
+                      @if (vendorForm.get('nom')?.invalid &&
+                      vendorForm.get('nom')?.touched) {
+                      <div class="invalid-feedback">
+                        Le nom du vendeur est requis.
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="prenoms"
+                        >Prénoms <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="prenoms"
+                        class="form-control"
+                        formControlName="prenoms"
+                        required
+                        placeholder="John"
+                        [ngClass]="{
+                          'is-invalid':
+                            vendorForm.get('prenoms')?.invalid &&
+                            vendorForm.get('prenoms')?.touched,
+                          'is-valid':
+                            vendorForm.get('prenoms')?.valid &&
+                            vendorForm.get('prenoms')?.touched
+                        }"
+                      />
+                      @if (vendorForm.get('prenoms')?.invalid &&
+                      vendorForm.get('prenoms')?.touched) {
+                      <div class="invalid-feedback">
+                        Le prénom du vendeur est requis.
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        formControlName="email"
+                        placeholder="Ex: example@email.com"
+                      />
+                    </div>
+                    @if (vendorForm.controls['email'].errors?.['email']) {
+                    <div class="invalid-feedback">
+                      Format d'email incorrecte.
+                    </div>
+                    }
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="telephone">N° Téléphone</label>
+                      <input
+                        type="text"
+                        id="telephone"
+                        class="form-control"
+                        formControlName="telephone"
+                        placeholder="00 00 00 00 00"
+                      />
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="username"
+                        >Nom d'utilisateur
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="username"
+                        class="form-control"
+                        formControlName="username"
+                        placeholder="Ex: login"
+                        required
+                        [ngClass]="{
+                          'is-invalid':
+                            vendorForm.get('username')?.invalid &&
+                            vendorForm.get('username')?.touched,
+                          'is-valid':
+                            vendorForm.get('username')?.valid &&
+                            vendorForm.get('username')?.touched
+                        }"
+                      />
+                      @if (vendorForm.controls['username'].errors?.['username'])
+                      {
+                      <div class="invalid-feedback">
+                        Le nom d'utilisateur est requis
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="password"
+                        >Mot de passe <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="password"
+                        class="form-control"
+                        placeholder="Ex: Mot de passe"
+                        readonly
+                        value="Azerty@2025"
+                      />
+                      <div class="form-text">
+                        Le vendeur pourra modifier son mot de passe lors de sa
+                        1ère connexion
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="organisation"
+                        >Partenaire <span class="text-danger">*</span></label
+                      >
+                      <ng-select
+                        required
+                        [items]="partners"
+                        bindLabel="name"
+                        bindValue="id"
+                        formControlName="partnerId"
+                        [ngClass]="{
+                          'is-invalid':
+                            vendorForm.get('partnerId')?.invalid &&
+                            vendorForm.get('partnerId')?.touched,
+                          'is-valid':
+                            vendorForm.get('partnerId')?.valid &&
+                            vendorForm.get('partnerId')?.touched
+                        }"
+                      >
+                      </ng-select>
+                      @if
+                      (vendorForm.controls['partnerId'].errors?.['partnerId']) {
+                      <div class="invalid-feedback">
+                        Veuillez sélectionner le partenaire associé
+                      </div>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="">Statut du vendeur</label>
+                      <div class="form-check form-switch form-switch-lg mb-3">
+                        <input
+                          type="checkbox"
+                          id="flexSwitchCheckChecked"
+                          class="form-control form-check-input"
+                          formControlName="enable"
+                        />
+                        <label
+                          for="flexSwitchCheckChecked"
+                          class="form-check-label"
+                        >
+                          {{
+                            vendorForm.get("enable")?.value
+                              ? "Activé"
+                              : "Désactivé"
+                          }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- {{factureForm.value|json}} -->
+                  @if (apiCallError) {
+                  <div class="mb-3">
+                    <div
+                      class="alert alert-danger d-flex align-items-center"
+                      role="alert"
+                    >
+                      <i class="fa fa-warning flex-shrink-0 me-2"></i>
+                      <div>
+                        {{ apiCallError.data }}
+                      </div>
+                    </div>
+                  </div>
+                  }
+                  <div class="row mt-3">
+                    <div class="col-lg-12 text-center">
+                      <button
+                        class="btn btn-outline-secondary me-2"
+                        type="button"
+                        (click)="cancel()"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        type="submit"
+                        class="btn btn-primary rounded-2"
+                        [disabled]="vendorForm.invalid || loadingBtn"
+                      >
+                        <i
+                          class="fa"
+                          [ngClass]="{
+                            'fa-spin fa-spinner': loadingBtn,
+                            'fa-check': !loadingBtn
+                          }"
+                        ></i>
+                        {{ textButton }}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

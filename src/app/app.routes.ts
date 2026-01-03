@@ -24,6 +24,20 @@ export const routes: Routes = [
         children: [
           { path: 'liste-partenaires', loadComponent: () => import('./features/partenaires/partnerlist/partnerlist.component').then(m => m.PartnerlistComponent) },
         ]
+      },
+      {
+        path: 'vendeurs', loadComponent: () => import('./features/vendeurs/vendeurs.component').then(m => m.VendeursComponent),
+        children: [
+          { path: 'liste-vendeurs', loadComponent: () => import('./features/vendeurs/vendor-list/vendor-list.component').then(m => m.VendorListComponent) },
+          { path: 'form', loadComponent: () => import('./features/vendeurs/vendor-form/vendor-form.component').then(m => m.VendorFormComponent) },
+          { path: 'form/:id', loadComponent: () => import('./features/vendeurs/vendor-form/vendor-form.component').then(m => m.VendorFormComponent) },
+        ]
+      },
+      {
+        path: 'comptes', loadComponent: () => import('./features/comptes/comptes.component').then(m => m.ComptesComponent),
+        children: [
+          { path: 'liste-comptes', loadComponent: () => import('./features/comptes/comptelist/comptelist.component').then(m => m.CompletListComponent) },
+        ]
       }
 
     ]

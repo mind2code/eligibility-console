@@ -1,0 +1,279 @@
+import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ModalModule, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Vendor } from '../../../core/model/vendor.model';
+import { VendorService } from '../../../core/service/vendor.service';
+import { ToastService } from '../../../core/service/globals/toast.service';
+import { VendorFormComponent } from '../vendor-form/vendor-form.component';
+import { BreadcrumbsComponent } from '../../common/breadcrumbs/breadcrumbs.component';
+import { breadCrumbItems } from '../../../shared/models/models';
+import { ApiPaginatedResponse } from '../../../core/model/api-response.model';
+import { environment } from '../../../../environments/environment';
+import { btnFormState } from '../../../core/constants/form-btn-state.constant';
+import { formModalHeader } from '../../../core/constants/form-modal-header.constant';
+import { Sort } from '@angular/material/sort';
+import { Observable } from 'rxjs';
+import { CollapseHeaderComponent } from '../../common/collapse-header/collapse-header.component';
+import { FooterComponent } from '../../common/footer/footer.component';
+
+@Component({
+  selector: 'app-vendor-list',
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, ModalModule, BreadcrumbsComponent, CollapseHeaderComponent, FooterComponent],
+  templateUrl: './vendor-list.component.html',
+  styleUrl: './vendor-list.component.scss',
+  providers: [BsModalService]
+})
+export class VendorListComponent {
+
+  breadCrumbItems: breadCrumbItems[] = [];
+  pageTitle = 'Vendeur';
+
+  vendeurs: Vendor[] = []
+  vendeursCopy: Vendor[] = []
+
+  apiResponse!: ApiPaginatedResponse<Vendor>
+
+  initChecked = false;
+  // pagination variables
+  page: number = 0;
+  size: number = environment.pageLimit;
+  apiCallError: any;
+  loadingBtn: boolean = false;
+  textButton = btnFormState.save;
+  txtModalHeader = formModalHeader.save + ' ' + this.pageTitle;
+
+  isEditMode: boolean = false;
+  isViewMode: boolean = false;
+
+  public searchDataValue = '';
+
+  vendeurForm!: FormGroup
+  vendeur!: Vendor | null;
+
+  modalRef?: BsModalRef;
+  config: any = {
+    backdrop: true,
+    ignoreBackdropClick: true,
+    class: 'modal-lg modal-dialog-centered'
+  };
+
+  constructor(
+    private _vendeurAPI: VendorService,
+    private _fb: FormBuilder,
+    private modalService: BsModalService,
+    private toastService: ToastService,
+    private router: Router
+  ) {
+
+    this.breadCrumbItems = [
+      { label: 'Vendeurs' },
+      { label: 'Liste vendeurs', active: true }
+    ];
+
+    this.apiResponse = {
+      total_pages: 0,
+      message: '',
+      total_items: 0,
+      current_page: 0,
+      status: false,
+      page_size: 0,
+      data: []
+    }
+
+    this.vendeurForm = this._fb.group({
+      name: ['', Validators.required],
+      code: ['', Validators.required],
+      phone: [''],
+      email: ['', Validators.compose([Validators.nullValidator, Validators.email])],
+    });
+
+  }
+
+  ngOnInit(): void {
+    this.loadVendeurs();
+  }
+
+  loadVendeurs() {
+
+    this._vendeurAPI.getAllByPage({ page: this.page, size: this.size }).subscribe({
+      next: (response) => {
+        console.log(response);
+
+        this.apiResponse = response;
+        this.vendeurs = response.data;
+        this.vendeursCopy = response.data;
+
+        // console.log(this.apiResponse);
+
+      },
+      error: (error) => {
+        console.error("Error fetching partners:", error);
+        this.toastService.error('Erreur', 'Une erreur est survenue lors du chargement des vendeurss.');
+      }
+    })
+  }
+
+  public searchData(value: string): void {
+    if (value == '') {
+      this.vendeurs = this.vendeursCopy;
+    } else {
+      // this.dataSource.filter = value.trim().toLowerCase();
+      // this.vendeurs = this.dataSource.filteredData;
+    }
+  }
+
+  public sortData(sort: Sort) {
+    const data = this.vendeurs.slice();
+
+    if (!sort.active || sort.direction === '') {
+      this.vendeurs = data;
+    } else {
+      this.vendeurs = data.sort((a, b) => {
+        const aValue = (a as never)[sort.active];
+
+        const bValue = (b as never)[sort.active];
+        return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
+      });
+    }
+  }
+  //Gestion de la pagination
+  changePage(newPage: number | string): void {
+    if (newPage === 'prev') {
+      this.page--;
+      if (this.page < 0) this.page = 0
+    } else if (newPage === 'next') {
+      this.page++;
+      if (this.page == this.apiResponse.total_pages) this.page = this.apiResponse.current_page
+    }
+
+    this.loadVendeurs();
+  }
+
+  savePartner(): void {
+    if (this.vendeurForm?.valid) {
+      this.changeFormElement();
+      const partnerData = this.vendeurForm.value;
+      let apiSend: Observable<any> = this.isEditMode ? this._vendeurAPI.update(this.vendeur?.id, partnerData) : this._vendeurAPI.save(partnerData);
+      apiSend.subscribe({
+        next: (response) => {
+          // console.log(response);
+          this.toastService.success('Succès', `Le vendeur a été ${this.isEditMode ? 'mis à jour' : 'créé'} avec succès.`).onHidden.subscribe(() => {
+            this.modalRef?.hide();
+            this.initFormElement(true);
+            this.loadVendeurs();
+          });
+        },
+        error: (error) => {
+          console.error("Error saving partner:", error);
+          this.toastService.error('Erreur', `Une erreur est survenue lors de la ${this.isEditMode ? 'mise à jour' : 'création'} du vendeur.`).onHidden.subscribe(() => {
+            this.apiCallError = error.error;
+            this.initFormElement();
+          });
+        }
+      });
+    }
+  }
+
+  delete(): void {
+    if (this.vendeur) {
+      // this.changeFormElement();
+
+      this.changeFormElement();
+      this._vendeurAPI.delete(this.vendeur.id).subscribe({
+        next: (response) => {
+          // console.log(response);
+          this.toastService.success('Succès', `Le vendeur a été supprimé avec succès.`).onHidden.subscribe(() => {
+            this.initFormElement(true);
+            this.modalRef?.hide();
+            this.loadVendeurs();
+          });
+        },
+        error: (error) => {
+          console.error("Error deleting partner:", error);
+          this.toastService.error('Erreur', `Une erreur est survenue lors de la suppression du vendeur.`).onHidden.subscribe(() => {
+            this.initFormElement();
+            this.apiCallError = error.error;
+          });
+        }
+      });
+    }
+  }
+
+  //Modification de l'apparence visuelle du bouton "Valider"
+  changeFormElement() {
+    this.loadingBtn = true
+    this.textButton = btnFormState.processing
+  }
+
+  //Remise à l'état initial du bouton "Valider" et des données du formulaire
+  initFormElement(isReinitData: boolean = false) {
+    this.textButton = btnFormState.save
+    this.loadingBtn = false;
+    this.apiCallError = undefined
+
+    if (isReinitData) {
+      this.clearForm()
+      this.txtModalHeader = formModalHeader.save + ' ' + this.pageTitle;
+    }
+  }
+  clearForm() {
+    this.vendeurForm.reset();
+  }
+
+  /**
+     * Open modal
+     * @param content modal content
+     */
+  openModal(content: any, dataToUpdate: Vendor | null, isModif: boolean = false, isView: boolean = false, isDelete: boolean = false) {
+
+    this.clearForm()
+    this.vendeur = dataToUpdate
+
+    if (isModif || isView) {
+      this.mapObjectToForm(dataToUpdate)
+    }
+    this.txtModalHeader = isModif ? formModalHeader.update + ' ' + this.pageTitle : isView ? formModalHeader.show + ' ' + this.pageTitle : isDelete ? formModalHeader.delete + ' ' + this.pageTitle : formModalHeader.save + ' ' + this.pageTitle;
+    if (isDelete) {
+      this.config.class = "modal-md modal-dialog-centered"
+    }
+    this.isEditMode = isModif
+    this.isViewMode = isView
+
+    this.modalRef = this.modalService.show(content, this.config);
+  }
+
+  mapObjectToForm(partner?: Vendor | null) {
+
+    this.vendeurForm.patchValue({
+      id: partner?.id,
+      // name: partner?.name,
+      // code: partner?.code,
+      // phone: partner?.phone,
+      // email: partner?.email,
+    });
+  }
+
+  changeStatus(vendeur: Vendor): void {
+    const updatedStatus = !vendeur.enable;
+    // this._partnerAPI.updateStatus(vendeur.id, updatedStatus).subscribe({
+    //   next: (response) => {
+    //     // console.log(response);
+    //     // this.loadvendeur();
+    //     this.toastService.success('Succès', `Le statut du vendeur a été mis à jour avec succès.`).onHidden.subscribe(() => {
+    //       this.loadvendeur();
+    //     });
+    //   },
+    //   error: (error) => {
+    //     console.error("Error updating partner status:", error);
+    //     this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du vendeur.`);
+    //   }
+    // });
+  }
+
+  formVendor(isEdit: boolean = false, vendorId: string = '') {
+    !isEdit ? this.router.navigate(['vendeurs/form']) : this.router.navigate(['vendeurs/form', vendorId])
+  }
+
+}

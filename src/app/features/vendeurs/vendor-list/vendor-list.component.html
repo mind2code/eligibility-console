@@ -1,0 +1,259 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des vendeurs"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
+              <i class="ti ti-file-export me-1"></i>Export
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Exporter en PDF</a
+                >
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Exporter en Excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="me-2 mb-2">
+          <a
+            class="btn btn-outline-secondary d-flex align-items-center"
+            ><i class="ti ti-cash me-2"></i>Réinitialiser mot de passe</a
+          >
+        </div>
+        <div class="mb-2">
+          <a
+            (click)="formVendor()"
+            class="btn btn-primary d-flex align-items-center"
+            ><i class="ti ti-circle-plus me-2"></i>Ajouter Vendeur</a
+          >
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Liste des Vendeurs</h5>
+        <div
+          class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
+        ></div>
+      </div>
+      <div class="card-body">
+        <div class="custom-datatable-filter">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label>
+                    Ligne Affichées :
+                    <select
+                      [(ngModel)]="size"
+                      (ngModelChange)="changePage(size)"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                  <label>
+                    <input
+                      [(ngModel)]="searchDataValue"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="searchData(searchDataValue)"
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Rechercher..."
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row dt-row">
+              <div class="col-sm-12 table-responsive">
+                <table class="table table-center table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th class="col">#</th>
+                      <th class="col">Nom du vendeur</th>
+                      <th class="col">Code</th>
+                      <th class="col">Email</th>
+                      <th class="col">Téléphone</th>
+                      <th class="col">Login</th>
+                      <th class="col">Partenaire</th>
+                      <th class="col">Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (vendeur of vendeurs; track $index) {
+                    <tr>
+                      <th scope="row">{{ $index + 1 }}</th>
+                      <td class="fw-bold">{{ vendeur.nom +' '+vendeur.prenoms }}</td>
+                      <td class="fw-bold">{{ vendeur.code }}</td>
+                      <td>{{ vendeur.email }}</td>
+                      <td>{{ vendeur.telephone }}</td>
+                      <td class="fw-bold">{{ vendeur.username }}</td>
+                      <td class="fw-bold"></td>
+                      <td>
+                        <span
+                          class="badge d-inline-flex align-items-center badge-xs"
+                          [ngClass]="
+                            vendeur.enable ? 'badge-success' : 'badge-danger'
+                          "
+                        >
+                          <i class="ti ti-point-filled me-1"></i
+                          >{{ vendeur.enable ? "Actif" : "Inactif" }}
+                        </span>
+                      </td>
+                      <td>
+                        <div class="action-icon d-inline-flex">
+                          <a class="me-2" (click)="changeStatus(vendeur)"
+                            ><i
+                              class="bi"
+                              [ngClass]="
+                                vendeur.enable ? 'bi-pause' : 'bi-play'
+                              "
+                            ></i
+                          ></a>
+                          <a
+                            class="me-2"
+                            
+                            ><i class="ti ti-edit"></i
+                          ></a>
+
+                          <a
+                            ><i class="ti ti-trash"></i
+                          ></a>
+                        </div>
+                      </td>
+                    </tr>
+                    } @if (vendeurs.length === 0) {
+                    <tr>
+                      <td colspan="12">
+                        <h5 class="no-record">Aucun vendeur trouvé</h5>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-5">
+                <div class="dataTables_info">
+                  @if(apiResponse.current_page!=undefined){ Affichage de
+                  <b>{{
+                    apiResponse.current_page * apiResponse.page_size + 1
+                  }}</b>
+                  à
+                  <b>
+                    @if (apiResponse.current_page+1==apiResponse.total_pages) {
+                    {{ apiResponse.total_items }}
+                    } @else {
+                    {{ (apiResponse.current_page + 1) * apiResponse.page_size }}
+                    }
+                  </b>
+                  sur
+                  <b>{{ apiResponse.total_items }}</b>
+                  }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                  }
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-7">
+                <div class="dataTables_paginate paging_simple_numbers">
+                  <nav aria-label="Page navigation" class="pagination-style-4">
+                    <ul class="pagination mb-0 flex-wrap">
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled: apiResponse!.current_page === 0
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          href="javascript:void(0);"
+                          [ngClass]="{
+                            'text-primary': apiResponse!.current_page !== 0
+                          }"
+                          (click)="changePage('prev')"
+                        >
+                          <i class="ti ti-chevron-left"></i>
+                        </a>
+                      </li>
+                      <li
+                        class="bg-primary text-white page-item d-flex align-items-center justify-content-center me-2 ms-2 ps-2 pe-2"
+                      >
+                        <span
+                          >Page @if(apiResponse.current_page!=undefined){
+                          {{
+                            apiResponse.current_page +
+                              1 +
+                              " / " +
+                              apiResponse.total_pages
+                          }}
+                          }@else {
+                          {{ page }} / {{ page }} }</span
+                        >
+                      </li>
+
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled:
+                            apiResponse!.current_page + 1 ===
+                            apiResponse!.total_pages
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          [ngClass]="{
+                            'text-primary':
+                              apiResponse!.current_page + 1 !==
+                              apiResponse!.total_pages
+                          }"
+                          href="javascript:void(0);"
+                          (click)="changePage('next')"
+                        >
+                          <i class="ti ti-chevron-right"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

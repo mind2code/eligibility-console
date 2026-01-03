@@ -41,6 +41,7 @@
         </div>
         <div class="me-2 mb-2">
           <a
+            (click)="openCreditModal(creditModal)"
             class="btn btn-outline-secondary d-flex align-items-center"
             ><i class="ti ti-cash me-2"></i>Recharger Compte</a
           >
@@ -355,7 +356,6 @@
             class="form-control"
             type="email"
             id="email"
-            required
             placeholder="john@deo.com"
             formControlName="email"
             [ngClass]="{
@@ -433,41 +433,86 @@
     <div class="modal-body">
       <div class="mb-3">
         <label class="form-label">Partenaire</label>
-        <select formControlName="partnerId" (change)="getPartnerParameters($event)" class="form-select" [ngClass]="{'is-invalid': paramForm.get('partnerId')?.invalid && paramForm.get('partnerId')?.touched}">
+        <select
+          formControlName="partnerId"
+          (change)="getPartnerParameters($event)"
+          class="form-select"
+          [ngClass]="{
+            'is-invalid':
+              paramForm.get('partnerId')?.invalid &&
+              paramForm.get('partnerId')?.touched
+          }"
+        >
           <option [ngValue]="null">Sélectionner un partenaire</option>
           @for (partner of partenaires; track $index) {
-            <option [ngValue]="partner.id">{{ partner.name }}</option>
+          <option [ngValue]="partner.id">{{ partner.name }}</option>
           }
         </select>
-        @if (paramForm.get('partnerId')?.invalid && paramForm.get('partnerId')?.touched) {
+        @if (paramForm.get('partnerId')?.invalid &&
+        paramForm.get('partnerId')?.touched) {
         <div class="invalid-feedback">Le partenaire est requis.</div>
         }
       </div>
 
       <div formArrayName="params">
-        <div *ngFor="let p of params.controls; let i = index" [formGroupName]="i" class="mb-3 d-flex gap-2 align-items-start">
-          <input formControlName="name" class="form-control" placeholder="Nom paramètre" />
-          <input formControlName="value" class="form-control" placeholder="Valeur" />
-          <button type="button" class="btn btn-outline-danger" (click)="removeParam(i)" [disabled]="params.length <= 1">
+        <div
+          *ngFor="let p of params.controls; let i = index"
+          [formGroupName]="i"
+          class="mb-3 d-flex gap-2 align-items-start"
+        >
+          <input
+            formControlName="name"
+            class="form-control"
+            placeholder="Nom paramètre"
+          />
+          <input
+            formControlName="value"
+            class="form-control"
+            placeholder="Valeur"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            (click)="removeParam(i)"
+            [disabled]="params.length <= 1"
+          >
             <i class="ti ti-trash"></i>
           </button>
         </div>
       </div>
 
       <div class="mb-3">
-        <button type="button" class="btn btn-outline-primary" (click)="addParam()"><i class="ti ti-plus me-1"></i>Ajouter un champ</button>
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          (click)="addParam()"
+        >
+          <i class="ti ti-plus me-1"></i>Ajouter un champ
+        </button>
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-cancel me-2" (click)="modalRef?.hide()">Annuler</button>
-      <button type="submit" class="btn btn-primary" [disabled]="paramForm.invalid"><i
+      <button
+        type="button"
+        class="btn btn-cancel me-2"
+        (click)="modalRef?.hide()"
+      >
+        Annuler
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="paramForm.invalid"
+      >
+        <i
           class="fa"
           [ngClass]="{
             'fa-spin fa-spinner': loadingBtn,
             'fa-check': !loadingBtn
           }"
         ></i>
-        {{ textButton }}</button>
+        {{ textButton }}
+      </button>
     </div>
   </form>
 </ng-template>
@@ -487,11 +532,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>Êtes-vous sûr de vouloir supprimer le partenaire <b>{{ partner?.name }}</b> ?</p>
+    <p>
+      Êtes-vous sûr de vouloir supprimer le partenaire
+      <b>{{ partner?.name }}</b> ?
+    </p>
   </div>
   <div class="modal-footer">
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">
+      <button
+        type="button"
+        class="btn btn-secondary me-2"
+        (click)="modalRef?.hide()"
+      >
         Annuler
       </button>
       <button type="button" class="btn btn-danger" (click)="delete()">
@@ -507,4 +559,125 @@
     </div>
   </div>
   <!-- End Modal for deleting partner -->
+</ng-template>
+
+<ng-template #creditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Recharger un compte</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formCredit" (submit)="creditAccount()" class="px-3">
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Partenaire</label>
+          <select
+            formControlName="partnerId"
+            class="form-select"
+            required
+            [ngClass]="{
+              'is-invalid':
+                formCredit.get('partnerId')?.invalid &&
+                formCredit.get('partnerId')?.touched
+            }"
+          >
+            <option [ngValue]="null">Sélectionner un partenaire</option>
+            @for (partner of partenaires; track $index) {
+            <option [ngValue]="partner.id">{{ partner.name }}</option>
+            }
+          </select>
+          @if (formCredit.get('partnerId')?.invalid &&
+          formCredit.get('partnerId')?.touched) {
+          <div class="invalid-feedback">Le partenaire est requis.</div>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="montant" class="form-label">Montant</label>
+          <input
+            class="form-control"
+            type="text"
+            mask="separator.2"
+            id="montant"
+            placeholder="Montant à créditer"
+            formControlName="montant"
+            required
+            [ngClass]="{
+              'is-invalid':
+                formCredit.get('montant')?.invalid &&
+                formCredit.get('montant')?.touched,
+              'is-valid':
+                formCredit.get('montant')?.valid &&
+                formCredit.get('montant')?.touched
+            }"
+          />
+          @if (formCredit.get('montant')?.invalid &&
+          formCredit.get('montant')?.touched) {
+          <div class="invalid-feedback">
+            Le montant de rechargement est requis.
+          </div>
+          }
+          @if (formCredit.get('montant')?.errors?.['min']) {
+          <div class="invalid-feedback">
+            Le montant de rechargement minimum est de 500.
+          </div>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="desc" class="form-label">Description</label>
+          <input
+            class="form-control"
+            type="text"
+            id="desc"
+            placeholder="Description du rechargement"
+            formControlName="description"
+          />
+        </div>
+
+        <!-- {{factureForm.value|json}} -->
+        @if (apiCallError) {
+        <div class="mb-3">
+          <div
+            class="alert alert-danger d-flex align-items-center"
+            role="alert"
+          >
+            <i class="fa fa-warning flex-shrink-0 me-2"></i>
+            <div>
+              {{ apiCallError.message }}
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-cancel me-2"
+          (click)="modalRef?.hide()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="formCredit.invalid"
+        >
+          <i
+            class="fa"
+            [ngClass]="{
+              'fa-spin fa-spinner': loadingBtn,
+              'fa-check': !loadingBtn
+            }"
+          ></i>
+          {{ textButton }}
+        </button>
+      </div>
+    </form>
+  </div>
 </ng-template>

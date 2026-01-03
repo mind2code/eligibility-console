@@ -7,7 +7,13 @@ export const routes = {
   },
 
   //Custom routes
+  //Partenaire
   partenaireList: '/partenaires/liste-partenaires',
+
+  //Vendeur
+  vendeurList: '/vendeurs/liste-vendeurs',
+  vendeurForm: '/vendeurs/form-vendeurs',
+  // compteList: '/comptes/liste-comptes',
 
   // auth routes
   signin: '/signin',
