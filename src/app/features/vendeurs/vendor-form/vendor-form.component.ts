@@ -8,7 +8,7 @@ import { BreadcrumbsComponent } from '../../common/breadcrumbs/breadcrumbs.compo
 import { FooterComponent } from '../../common/footer/footer.component';
 import { breadCrumbItems } from '../../../shared/models/models';
 import { CollapseHeaderComponent } from '../../common/collapse-header/collapse-header.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { btnFormState } from '../../../core/constants/form-btn-state.constant';
 import { PartnerService } from '../../../core/service/partner.service';
 import { Partner } from '../../../core/model/partner.model';
@@ -16,7 +16,7 @@ import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent 
 
 @Component({
   selector: 'app-vendor-form',
-  imports: [ReactiveFormsModule, CommonModule, BreadcrumbsComponent, FooterComponent, CollapseHeaderComponent, NgSelectComponent,],
+  imports: [ReactiveFormsModule, CommonModule, BreadcrumbsComponent, FooterComponent, CollapseHeaderComponent, NgSelectComponent, RouterLink],
   templateUrl: './vendor-form.component.html',
   styleUrl: './vendor-form.component.scss'
 })

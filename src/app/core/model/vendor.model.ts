@@ -8,5 +8,7 @@ export type Vendor = {
     telephone: string,
     telephoneSecondaire: string,
     email: string,
-    enable: boolean
+    enable: boolean,
+    partnerId: string,
+    partner: string,
 }

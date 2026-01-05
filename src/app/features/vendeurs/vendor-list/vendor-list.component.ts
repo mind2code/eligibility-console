@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ModalModule, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -51,6 +51,7 @@ export class VendorListComponent {
 
   vendeurForm!: FormGroup
   vendeur!: Vendor | null;
+  newPassword!: FormControl
 
   modalRef?: BsModalRef;
   config: any = {
@@ -88,6 +89,8 @@ export class VendorListComponent {
       phone: [''],
       email: ['', Validators.compose([Validators.nullValidator, Validators.email])],
     });
+
+    this.newPassword = _fb.control('', Validators.compose([Validators.required, Validators.minLength(5)]))
 
   }
 
@@ -257,23 +260,49 @@ export class VendorListComponent {
 
   changeStatus(vendeur: Vendor): void {
     const updatedStatus = !vendeur.enable;
-    // this._partnerAPI.updateStatus(vendeur.id, updatedStatus).subscribe({
-    //   next: (response) => {
-    //     // console.log(response);
-    //     // this.loadvendeur();
-    //     this.toastService.success('Succès', `Le statut du vendeur a été mis à jour avec succès.`).onHidden.subscribe(() => {
-    //       this.loadvendeur();
-    //     });
-    //   },
-    //   error: (error) => {
-    //     console.error("Error updating partner status:", error);
-    //     this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du vendeur.`);
-    //   }
-    // });
+    this._vendeurAPI.updateStatus(vendeur.id, updatedStatus).subscribe({
+      next: (response) => {
+        // console.log(response);
+        // this.loadvendeur();
+        this.toastService.success('Succès', `Le statut du vendeur a été mis à jour avec succès.`).onHidden.subscribe(() => {
+          this.loadVendeurs();
+        });
+      },
+      error: (error) => {
+        console.error("Error updating partner status:", error);
+        this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du vendeur.`);
+      }
+    });
   }
 
   formVendor(isEdit: boolean = false, vendorId: string = '') {
     !isEdit ? this.router.navigate(['vendeurs/form']) : this.router.navigate(['vendeurs/form', vendorId])
+  }
+
+  reinitPassword() {
+    //Changement de l'apparence du bouton
+    this.changeFormElement();
+
+    this._vendeurAPI.reinitPassword(this.vendeur!.id, this.newPassword.value).subscribe({
+      next: response => {
+        // console.log("Data receive: " + response);
+
+        this.modalService.hide();
+        this.toastService.success("Mot de passe rénitialisé avec succès", "Réinitialisation éffectuée").onHidden.subscribe(() => {
+          this.initFormElement(true);
+          this.modalRef?.hide();
+          this.newPassword.reset()
+
+        })
+      },
+      error: error => {
+        console.error("There is an error !", error);
+        this.toastService.error("Une erreur est survenue", "Réinitialisation échouée").onHidden.subscribe(() => {
+          this.initFormElement();
+          this.apiCallError = error.error;
+        });
+      }
+    });
   }
 
 }

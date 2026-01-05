@@ -12,6 +12,7 @@ import { authInterceptor } from './core/guard/auth.interceptor';
 import { registerLocaleData } from '@angular/common';
 import localeFR from '@angular/common/locales/fr';
 import { provideToastr } from 'ngx-toastr';
+import { provideSweetAlert2 } from "@sweetalert2/ngx-sweetalert2";
 
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /^(http:\/\/localhost:8700)(\/.*)?$/i,
@@ -51,8 +52,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([includeBearerTokenInterceptor])),
     provideNgxMask(),
     provideRouter(routes),
-    {provide: LOCALE_ID, useValue: 'fr-FR'},
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
     provideToastr(),
+    provideSweetAlert2({
+      // Optional configuration
+      fireOnInit: false,
+      dismissOnDestroy: true,
+    }),
   ],
 
 };

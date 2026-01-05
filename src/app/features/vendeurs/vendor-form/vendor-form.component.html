@@ -34,6 +34,7 @@
         </div>
         <div class="mb-2">
           <a class="btn btn-primary d-flex align-items-center"
+              routerLink="/vendeurs/liste-vendeurs"
             ><i class="ti ti-circle-plus me-2"></i>Liste Vendeurs</a
           >
         </div>
@@ -184,7 +185,7 @@
                             vendorForm.get('username')?.touched
                         }"
                       />
-                      @if (vendorForm.controls['username'].errors?.['username'])
+                      @if (vendorForm.controls['username'].errors?.['required'])
                       {
                       <div class="invalid-feedback">
                         Le nom d'utilisateur est requis
@@ -231,7 +232,7 @@
                       >
                       </ng-select>
                       @if
-                      (vendorForm.controls['partnerId'].errors?.['partnerId']) {
+                      (vendorForm.controls['partnerId'].errors?.['required']) {
                       <div class="invalid-feedback">
                         Veuillez sélectionner le partenaire associé
                       </div>

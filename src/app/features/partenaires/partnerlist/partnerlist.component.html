@@ -145,7 +145,9 @@
                       </td>
                       <td>
                         <div class="action-icon d-inline-flex">
-                          <a class="me-2" (click)="changeStatus(partenaire)"
+                          <a class="me-2" 
+                            [swal]="statusSwal"
+                            (confirm)="changeStatus(partenaire)"
                             ><i
                               class="bi"
                               [ngClass]="
@@ -681,3 +683,14 @@
     </form>
   </div>
 </ng-template>
+
+<swal
+    #statusSwal
+    title="Activation / Désactivation de {{ partner?.name }}?"
+    text="Êtes vous sûr de vouloir effectuer cette opération ?"
+    icon="question"
+    [showCancelButton]="true"
+    [focusCancel]="true"
+    (confirm)="delete()"
+>
+</swal>

@@ -23,10 +23,12 @@ import { PartnerParamRequest } from '../../../core/model/dto/partner-param-reque
 import { PartnerParam } from '../../../core/model/partner-param.model';
 import { NgxMaskDirective } from "ngx-mask";
 import { AccountService } from '../../../core/service/account.service';
+import { SwalComponent, SwalDirective } from '@sweetalert2/ngx-sweetalert2';
 
 @Component({
   selector: 'app-partnerlist',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, FooterComponent, ModalModule, NgxMaskDirective],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, 
+    FooterComponent, ModalModule, NgxMaskDirective, SwalComponent, SwalDirective],
   templateUrl: './partnerlist.component.html',
   styleUrl: './partnerlist.component.scss',
   providers: [BsModalService]
@@ -434,6 +436,7 @@ export class PartnerlistComponent {
           this.toastService.success('Succès', 'Paramètres enregistrés avec succès.').onHidden.subscribe(() => {
             this.modalRef?.hide();
             this.initFormElement(true)
+            this.loadPartenaire()
           });
         },
         error: (error) => {

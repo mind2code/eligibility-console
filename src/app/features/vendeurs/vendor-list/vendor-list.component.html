@@ -32,12 +32,6 @@
             </ul>
           </div>
         </div>
-        <div class="me-2 mb-2">
-          <a
-            class="btn btn-outline-secondary d-flex align-items-center"
-            ><i class="ti ti-cash me-2"></i>Réinitialiser mot de passe</a
-          >
-        </div>
         <div class="mb-2">
           <a
             (click)="formVendor()"
@@ -106,7 +100,7 @@
                       <th class="col">Email</th>
                       <th class="col">Téléphone</th>
                       <th class="col">Login</th>
-                      <th class="col">Partenaire</th>
+                      <th class="col">Partenaire associé</th>
                       <th class="col">Status</th>
                       <th>Actions</th>
                     </tr>
@@ -115,12 +109,16 @@
                     @for (vendeur of vendeurs; track $index) {
                     <tr>
                       <th scope="row">{{ $index + 1 }}</th>
-                      <td class="fw-bold">{{ vendeur.nom +' '+vendeur.prenoms }}</td>
+                      <td class="fw-bold">
+                        {{ vendeur.nom + " " + vendeur.prenoms }}
+                      </td>
                       <td class="fw-bold">{{ vendeur.code }}</td>
                       <td>{{ vendeur.email }}</td>
                       <td>{{ vendeur.telephone }}</td>
                       <td class="fw-bold">{{ vendeur.username }}</td>
-                      <td class="fw-bold"></td>
+                      <td class="fw-bold text-secondary">
+                        {{ vendeur.partner }}
+                      </td>
                       <td>
                         <span
                           class="badge d-inline-flex align-items-center badge-xs"
@@ -134,7 +132,12 @@
                       </td>
                       <td>
                         <div class="action-icon d-inline-flex">
-                          <a class="me-2" (click)="changeStatus(vendeur)"
+                          <a
+                            class="me-2"
+                            (click)="changeStatus(vendeur)"
+                            title="{{
+                              vendeur.enable ? 'Désactiver' : 'Activer'
+                            }} le vendeur"
                             ><i
                               class="bi"
                               [ngClass]="
@@ -144,11 +147,31 @@
                           ></a>
                           <a
                             class="me-2"
-                            
+                            (click)="openModal(
+                                templatePassword,
+                                vendeur,
+                                false,
+                                false,
+                                true
+                              )"
+                            title="Réinitialiser le mot de passe du vendeur"
+                            ><i class="bi bi-arrow-repeat"></i
+                          ></a>
+                          <a (click)="formVendor(true, vendeur.id)" class="me-2" title="Modifier le vendeur"
                             ><i class="ti ti-edit"></i
                           ></a>
 
                           <a
+                            (click)="
+                              openModal(
+                                deleteModal,
+                                vendeur,
+                                false,
+                                false,
+                                true
+                              )
+                            "
+                            title="Supprimer le vendeur"
                             ><i class="ti ti-trash"></i
                           ></a>
                         </div>
@@ -257,3 +280,117 @@
     </div>
   </div>
 </div>
+
+<ng-template #deleteModal let-modal>
+  <!-- Modal for deleting partner -->
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{ txtModalHeader }}</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>
+      Êtes-vous sûr de vouloir supprimer le vendeur
+      <b>{{ vendeur?.nom + " " + vendeur?.prenoms }}</b> ?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary me-2"
+        (click)="modalRef?.hide()"
+      >
+        Annuler
+      </button>
+      <button type="button" class="btn btn-danger" (click)="delete()">
+        <i
+          class="fa"
+          [ngClass]="{
+            'fa-spin fa-spinner': loadingBtn,
+            'fa-check': !loadingBtn
+          }"
+        ></i>
+        {{ textButton }}
+      </button>
+    </div>
+  </div>
+  <!-- End Modal for deleting partner -->
+</ng-template>
+
+<!--Modal Delete-->
+<ng-template #templatePassword>
+  <form (ngSubmit)="reinitPassword()">
+    <div class="modal-header">
+      <h5 class="modal-title pull-left">Réinitialisation de mot de passe</h5>
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <label for="password"
+            >Nouveau Mot de passe <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            [formControl]="newPassword"
+            id="password"
+            class="form-control"
+            name="password"
+            required
+            [ngClass]="{
+              'is-invalid': newPassword.invalid && newPassword.touched,
+              'is-valid': newPassword.valid && newPassword.touched
+            }"
+          />
+
+          @if (newPassword.errors?.['required']) {
+          <div class="invalid-feedback">Veuillez renseigner le nouveau mot de passe.</div>
+          }
+          @if (newPassword.errors?.['minLength']) {
+          <div class="invalid-feedback">Veuillez renseigner 5 caractères minimum.</div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-bs-dismiss="modal"
+          (click)="modalRef?.hide()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-danger rounded-2"
+          [disabled]="!newPassword.valid && !loadingBtn"
+        >
+          <i
+            class="fa"
+            [ngClass]="{
+              'fa-spin fa-spinner': loadingBtn,
+              'fa-check': !loadingBtn
+            }"
+          ></i>
+          {{ textButton }}
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
