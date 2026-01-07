@@ -17,6 +17,7 @@ import { Sort } from '@angular/material/sort';
 import { Observable } from 'rxjs';
 import { CollapseHeaderComponent } from '../../common/collapse-header/collapse-header.component';
 import { FooterComponent } from '../../common/footer/footer.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-vendor-list',
@@ -259,20 +260,30 @@ export class VendorListComponent {
   }
 
   changeStatus(vendeur: Vendor): void {
-    const updatedStatus = !vendeur.enable;
-    this._vendeurAPI.updateStatus(vendeur.id, updatedStatus).subscribe({
-      next: (response) => {
-        // console.log(response);
-        // this.loadvendeur();
-        this.toastService.success('Succès', `Le statut du vendeur a été mis à jour avec succès.`).onHidden.subscribe(() => {
-          this.loadVendeurs();
+    Swal.fire({
+      title: (vendeur.enable ? 'Désactiver' : 'Activer') + ' le vendeur \n' + vendeur.nom + ' ' + vendeur.prenoms + '?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Valider",
+      cancelButtonText: "Annuler"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedStatus = !vendeur.enable;
+        this._vendeurAPI.updateStatus(vendeur.id, updatedStatus).subscribe({
+          next: (response) => {
+            // console.log(response);
+            // this.loadvendeur();
+            this.toastService.success('Succès', `Le statut du vendeur a été mis à jour avec succès.`).onHidden.subscribe(() => {
+              this.loadVendeurs();
+            });
+          },
+          error: (error) => {
+            console.error("Error updating partner status:", error);
+            this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du vendeur.`);
+          }
         });
-      },
-      error: (error) => {
-        console.error("Error updating partner status:", error);
-        this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du vendeur.`);
       }
-    });
+    })
   }
 
   formVendor(isEdit: boolean = false, vendorId: string = '') {

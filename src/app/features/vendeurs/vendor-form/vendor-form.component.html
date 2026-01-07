@@ -173,6 +173,7 @@
                         type="text"
                         id="username"
                         class="form-control"
+                        [disabled]="isEditMode"
                         formControlName="username"
                         placeholder="Ex: login"
                         required
@@ -192,7 +193,7 @@
                       </div>
                       }
                     </div>
-                    <div class="col-sm-6 col-md-4 mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3" [hidden]="isEditMode">
                       <label for="password"
                         >Mot de passe <span class="text-danger">*</span></label
                       >

@@ -146,8 +146,7 @@
                       <td>
                         <div class="action-icon d-inline-flex">
                           <a class="me-2" 
-                            [swal]="statusSwal"
-                            (confirm)="changeStatus(partenaire)"
+                            (click)="changeStatus(partenaire)"
                             ><i
                               class="bi"
                               [ngClass]="

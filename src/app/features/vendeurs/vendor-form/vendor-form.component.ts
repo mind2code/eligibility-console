@@ -91,7 +91,9 @@ export class VendorFormComponent implements OnInit {
   loadVendor(id: string): void {
     this._vendorAPI.getById(id).subscribe({
       next: (response) => {
-        this.vendor = response;
+        console.log(response);
+
+        this.vendor = response.data;
         this.isEditMode = true;
         this.mapObjectToForm(this.vendor);
       },
@@ -139,7 +141,8 @@ export class VendorFormComponent implements OnInit {
       telephone: vendor?.telephone,
       telephoneSecondaire: vendor?.telephoneSecondaire,
       email: vendor?.email,
-      enable: vendor?.enable ?? true
+      enable: vendor?.enable ?? true,
+      partnerId: vendor?.partnerId
     });
   }
 

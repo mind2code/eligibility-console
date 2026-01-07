@@ -24,10 +24,11 @@ import { PartnerParam } from '../../../core/model/partner-param.model';
 import { NgxMaskDirective } from "ngx-mask";
 import { AccountService } from '../../../core/service/account.service';
 import { SwalComponent, SwalDirective } from '@sweetalert2/ngx-sweetalert2';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-partnerlist',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, 
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent,
     FooterComponent, ModalModule, NgxMaskDirective, SwalComponent, SwalDirective],
   templateUrl: './partnerlist.component.html',
   styleUrl: './partnerlist.component.scss',
@@ -205,7 +206,6 @@ export class PartnerlistComponent {
   delete(): void {
     if (this.partner) {
       // this.changeFormElement();
-
       this.changeFormElement();
       this._partnerAPI.delete(this.partner.id).subscribe({
         next: (response) => {
@@ -228,20 +228,30 @@ export class PartnerlistComponent {
   }
 
   changeStatus(partenaire: Partner): void {
-    const updatedStatus = !partenaire.active;
-    this._partnerAPI.updateStatus(partenaire.id, updatedStatus).subscribe({
-      next: (response) => {
-        // console.log(response);
-        // this.loadPartenaire();
-        this.toastService.success('Succès', `Le statut du partenaire a été mis à jour avec succès.`).onHidden.subscribe(() => {
-          this.loadPartenaire();
+    Swal.fire({
+      title: (partenaire.active ? 'Désactiver' : 'Activer') + ' le partenaire \n' + partenaire.name + '?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Valider",
+      cancelButtonText: "Annuler"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedStatus = !partenaire.active;
+        this._partnerAPI.updateStatus(partenaire.id, updatedStatus).subscribe({
+          next: (response) => {
+            // console.log(response);
+            // this.loadPartenaire();
+            this.toastService.success('Succès', `Le statut du partenaire a été mis à jour avec succès.`).onHidden.subscribe(() => {
+              this.loadPartenaire();
+            });
+          },
+          error: (error) => {
+            console.error("Error updating partner status:", error);
+            this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du partenaire.`);
+          }
         });
-      },
-      error: (error) => {
-        console.error("Error updating partner status:", error);
-        this.toastService.error('Erreur', `Une erreur est survenue lors de la mise à jour du statut du partenaire.`);
       }
-    });
+    })
   }
 
   //Modification de l'apparence visuelle du bouton "Valider"
