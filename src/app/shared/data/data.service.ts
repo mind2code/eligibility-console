@@ -2641,11 +2641,11 @@ export class DataService {
         },
         {
           menuValue: 'Gestion des compteurs',
-          route: routes.index,
+          route: routes.compteurList,
           hasSubRoute: false,
           showSubRoute: false,
           icon: 'hierarchy-2',
-          base: 'super-admin',
+          base: 'compteurs',
           materialicons: '',
           subMenus: [],
         },

@@ -34,6 +34,14 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'compteurs', loadComponent: () => import('./features/compteurs/compteurs.component').then(m => m.CompteursComponent),
+        children: [
+          { path: 'liste-compteurs', loadComponent: () => import('./features/compteurs/compteur-list/compteur-list.component').then(m => m.CompteurListComponent) },
+          { path: 'form', loadComponent: () => import('./features/compteurs/compteur-form/compteur-form.component').then(m => m.CompteurFormComponent) },
+          { path: 'form/:id', loadComponent: () => import('./features/compteurs/compteur-form/compteur-form.component').then(m => m.CompteurFormComponent) },
+        ]
+      },
+      {
         path: 'comptes', loadComponent: () => import('./features/comptes/comptes.component').then(m => m.ComptesComponent),
         children: [
           { path: 'liste-comptes', loadComponent: () => import('./features/comptes/comptelist/comptelist.component').then(m => m.CompletListComponent) },

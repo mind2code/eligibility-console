@@ -34,9 +34,9 @@
         </div>
         <div class="mb-2">
           <a
-            (click)="formVendor()"
+            (click)="formCompteur()"
             class="btn btn-primary d-flex align-items-center"
-            ><i class="ti ti-circle-plus me-2"></i>Ajouter Vendeur</a
+            ><i class="ti ti-circle-plus me-2"></i>Ajouter Compteur</a
           >
         </div>
         <app-collapse-header></app-collapse-header>
@@ -80,7 +80,8 @@
                     <input
                       [(ngModel)]="searchDataValue"
                       [ngModelOptions]="{ standalone: true }"
-                      (ngModelChange)="searchData(searchDataValue)"
+                      (ngModelChange)="onSearchInputChange(searchDataValue)"
+                      (keydown.enter)="searchData(searchDataValue)"
                       type="search"
                       class="form-control form-control-sm"
                       placeholder="Rechercher..."
@@ -95,66 +96,41 @@
                   <thead>
                     <tr>
                       <th class="col">#</th>
-                      <th class="col">Nom du vendeur</th>
-                      <th class="col">Code</th>
-                      <th class="col">Email</th>
-                      <th class="col">Téléphone</th>
-                      <th class="col">Login</th>
-                      <th class="col">Partenaire associé</th>
-                      <th class="col">Status</th>
+                      <th>Serial</th>
+                      <th>Fabricant</th>
+                      <th>Type</th>
+                      <th>Base Date</th>
+                      <th>Algorithme</th>
+                      <th>KRN</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @for (vendeur of vendeurs; track $index) {
+                    @for (compteur of compteurs; track $index) {
                     <tr>
                       <th scope="row">{{ $index + 1 }}</th>
                       <td class="fw-bold">
-                        {{ vendeur.nom + " " + vendeur.prenoms }}
+                        {{ compteur.serialNumber }}
                       </td>
-                      <td class="fw-bold">{{ vendeur.code }}</td>
-                      <td>{{ vendeur.email }}</td>
-                      <td>{{ vendeur.telephone }}</td>
-                      <td class="fw-bold">{{ vendeur.username }}</td>
-                      <td class="fw-bold text-secondary">
-                        {{ vendeur.partner }}
-                      </td>
-                      <td>
-                        <span
+                      <td>{{ compteur.fabricant?.name }}</td>
+                      <td><span
                           class="badge d-inline-flex align-items-center badge-xs"
                           [ngClass]="
-                            vendeur.enable ? 'badge-success' : 'badge-danger'
+                            compteur.stsVersion?.replaceAll(' ', '') === 'STS6' ? 'badge-success' : 'badge-danger'
                           "
                         >
                           <i class="ti ti-point-filled me-1"></i
-                          >{{ vendeur.enable ? "Actif" : "Inactif" }}
-                        </span>
-                      </td>
+                          >{{ compteur.stsVersion }}
+                        </span></td>
+                      <td>{{ compteur.dateBase }}</td>
+                      <td>{{ compteur.algorithme }}</td>
+                      <td>{{ compteur.krn }}</td>
                       <td>
                         <div class="action-icon d-inline-flex">
                           <a
+                            (click)="formCompteur(true, compteur.id)"
                             class="me-2"
-                            (click)="changeStatus(vendeur)"
-                            title="{{
-                              vendeur.enable ? 'Désactiver' : 'Activer'
-                            }} le vendeur"
-                            ><i
-                              class="bi"
-                              [ngClass]="
-                                vendeur.enable ? 'bi-pause' : 'bi-play'
-                              "
-                            ></i
-                          ></a>
-                          <a
-                            class="me-2"
-                            (click)="openModal(
-                                templatePassword,
-                                vendeur
-                              )"
-                            title="Réinitialiser le mot de passe du vendeur"
-                            ><i class="bi bi-arrow-repeat"></i
-                          ></a>
-                          <a (click)="formVendor(true, vendeur.id)" class="me-2" title="Modifier le vendeur"
+                            title="Modifier le compteur"
                             ><i class="ti ti-edit"></i
                           ></a>
 
@@ -162,19 +138,19 @@
                             (click)="
                               openModal(
                                 deleteModal,
-                                vendeur
+                                compteur
                               )
                             "
-                            title="Supprimer le vendeur"
+                            title="Supprimer le compteur"
                             ><i class="ti ti-trash"></i
                           ></a>
                         </div>
                       </td>
                     </tr>
-                    } @if (vendeurs.length === 0) {
+                    } @if (compteurs.length === 0) {
                     <tr>
                       <td colspan="12">
-                        <h5 class="no-record">Aucun vendeur trouvé</h5>
+                        <h5 class="no-record">Aucun compteur trouvé</h5>
                       </td>
                     </tr>
                     }
@@ -290,8 +266,8 @@
   </div>
   <div class="modal-body">
     <p>
-      Êtes-vous sûr de vouloir supprimer le vendeur
-      <b>{{ vendeur?.nom + " " + vendeur?.prenoms }}</b> ?
+      Êtes-vous sûr de vouloir supprimer le compteur
+      <b>{{ compteur?.serialNumber }}</b> ?
     </p>
   </div>
   <div class="modal-footer">
@@ -316,75 +292,4 @@
     </div>
   </div>
   <!-- End Modal for deleting partner -->
-</ng-template>
-
-<!--Modal Delete-->
-<ng-template #templatePassword>
-  <form (ngSubmit)="reinitPassword()">
-    <div class="modal-header">
-      <h5 class="modal-title pull-left">Réinitialisation de mot de passe</h5>
-      <button
-        type="button"
-        class="btn-close close pull-right"
-        aria-label="Close"
-        (click)="modalRef?.hide()"
-      >
-        <span aria-hidden="true" class="visually-hidden">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-sm-12 col-md-12">
-          <label for="password"
-            >Nouveau Mot de passe <span class="text-danger">*</span></label
-          >
-          <input
-            type="text"
-            [formControl]="newPassword"
-            id="password"
-            class="form-control"
-            name="password"
-            required
-            [ngClass]="{
-              'is-invalid': newPassword.invalid && newPassword.touched,
-              'is-valid': newPassword.valid && newPassword.touched
-            }"
-          />
-
-          @if (newPassword.errors?.['required']) {
-          <div class="invalid-feedback">Veuillez renseigner le nouveau mot de passe.</div>
-          }
-          @if (newPassword.errors?.['minLength']) {
-          <div class="invalid-feedback">Veuillez renseigner 5 caractères minimum.</div>
-          }
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="hstack gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-dismiss="modal"
-          (click)="modalRef?.hide()"
-        >
-          Annuler
-        </button>
-        <button
-          type="submit"
-          class="btn btn-danger rounded-2"
-          [disabled]="!newPassword.valid && !loadingBtn"
-        >
-          <i
-            class="fa"
-            [ngClass]="{
-              'fa-spin fa-spinner': loadingBtn,
-              'fa-check': !loadingBtn
-            }"
-          ></i>
-          {{ textButton }}
-        </button>
-      </div>
-    </div>
-  </form>
 </ng-template>

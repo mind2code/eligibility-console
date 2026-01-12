@@ -50,7 +50,6 @@ export class VendorListComponent {
 
   public searchDataValue = '';
 
-  vendeurForm!: FormGroup
   vendeur!: Vendor | null;
   newPassword!: FormControl
 
@@ -83,13 +82,6 @@ export class VendorListComponent {
       page_size: 0,
       data: []
     }
-
-    this.vendeurForm = this._fb.group({
-      name: ['', Validators.required],
-      code: ['', Validators.required],
-      phone: [''],
-      email: ['', Validators.compose([Validators.nullValidator, Validators.email])],
-    });
 
     this.newPassword = _fb.control('', Validators.compose([Validators.required, Validators.minLength(5)]))
 
@@ -155,31 +147,6 @@ export class VendorListComponent {
     this.loadVendeurs();
   }
 
-  savePartner(): void {
-    if (this.vendeurForm?.valid) {
-      this.changeFormElement();
-      const partnerData = this.vendeurForm.value;
-      let apiSend: Observable<any> = this.isEditMode ? this._vendeurAPI.update(this.vendeur?.id, partnerData) : this._vendeurAPI.save(partnerData);
-      apiSend.subscribe({
-        next: (response) => {
-          // console.log(response);
-          this.toastService.success('Succès', `Le vendeur a été ${this.isEditMode ? 'mis à jour' : 'créé'} avec succès.`).onHidden.subscribe(() => {
-            this.modalRef?.hide();
-            this.initFormElement(true);
-            this.loadVendeurs();
-          });
-        },
-        error: (error) => {
-          console.error("Error saving partner:", error);
-          this.toastService.error('Erreur', `Une erreur est survenue lors de la ${this.isEditMode ? 'mise à jour' : 'création'} du vendeur.`).onHidden.subscribe(() => {
-            this.apiCallError = error.error;
-            this.initFormElement();
-          });
-        }
-      });
-    }
-  }
-
   delete(): void {
     if (this.vendeur) {
       // this.changeFormElement();
@@ -218,45 +185,21 @@ export class VendorListComponent {
     this.apiCallError = undefined
 
     if (isReinitData) {
-      this.clearForm()
       this.txtModalHeader = formModalHeader.save + ' ' + this.pageTitle;
     }
-  }
-  clearForm() {
-    this.vendeurForm.reset();
   }
 
   /**
      * Open modal
      * @param content modal content
      */
-  openModal(content: any, dataToUpdate: Vendor | null, isModif: boolean = false, isView: boolean = false, isDelete: boolean = false) {
+  openModal(content: any, dataToUpdate: Vendor | null) {
 
-    this.clearForm()
     this.vendeur = dataToUpdate
 
-    if (isModif || isView) {
-      this.mapObjectToForm(dataToUpdate)
-    }
-    this.txtModalHeader = isModif ? formModalHeader.update + ' ' + this.pageTitle : isView ? formModalHeader.show + ' ' + this.pageTitle : isDelete ? formModalHeader.delete + ' ' + this.pageTitle : formModalHeader.save + ' ' + this.pageTitle;
-    if (isDelete) {
-      this.config.class = "modal-md modal-dialog-centered"
-    }
-    this.isEditMode = isModif
-    this.isViewMode = isView
+    this.config.class = "modal-md modal-dialog-centered"
 
     this.modalRef = this.modalService.show(content, this.config);
-  }
-
-  mapObjectToForm(partner?: Vendor | null) {
-
-    this.vendeurForm.patchValue({
-      id: partner?.id,
-      // name: partner?.name,
-      // code: partner?.code,
-      // phone: partner?.phone,
-      // email: partner?.email,
-    });
   }
 
   changeStatus(vendeur: Vendor): void {

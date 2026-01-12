@@ -1,0 +1,350 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des vendeurs"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
+              <i class="ti ti-file-export me-1"></i>Export
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Exporter en PDF</a
+                >
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Exporter en Excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-2">
+          <a
+            class="btn btn-primary d-flex align-items-center"
+            routerLink="/compteurs/liste-compteurs"
+            ><i class="ti ti-circle-plus me-2"></i>Liste Vendeurs</a
+          >
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Formulaire des Compteurs</h5>
+        <div
+          class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
+        ></div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body border-bottom">
+                <h5>
+                  Les champs marqués <span class="text-danger">*</span> sont
+                  obligatoires
+                </h5>
+              </div>
+
+              <!-- Mode selection: manual entry or import from Excel -->
+              <div class="card-body">
+                <div class="mb-3 d-flex align-items-center">
+                  <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" name="inputMode" id="manualMode" [checked]="mode==='manual'" (change)="mode='manual'" />
+                    <label class="form-check-label" for="manualMode">Renseigner manuellement</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="inputMode" id="importMode" [checked]="mode==='import'" (change)="mode='import'" />
+                    <label class="form-check-label" for="importMode">Importer depuis Excel</label>
+                  </div>
+                </div>
+
+                <!-- Import UI -->
+                <div *ngIf="mode === 'import'" class="mt-3">
+                  <div class="mb-3">
+                    <label class="form-label" for="uploadFileInput">Fichier Excel (.xls, .xlsx, .csv)</label>
+                    <input id="uploadFileInput" type="file" class="form-control" (change)="onFileSelected($event)" accept=".xls,.xlsx,.csv" />
+                    <small *ngIf="selectedFileName" class="form-text text-muted">Fichier sélectionné: {{ selectedFileName }}</small>
+                  </div>
+                  <div class="text-center mt-2">
+                    <button class="btn btn-outline-secondary me-2" type="button" (click)="mode='manual'">Retour</button>
+                    <button class="btn btn-primary" type="button" [disabled]="!fileToUpload || uploadLoading" (click)="uploadExcel()">
+                      <i class="fa" [ngClass]="{ 'fa-spin fa-spinner': uploadLoading, 'fa-upload': !uploadLoading }"></i>
+                      Importer
+                    </button>
+                  </div>
+
+                  <div *ngIf="uploadResult" class="mt-3">
+                    <div class="alert alert-info">Résultat de l'import: <pre class="mb-0">{{ uploadResult | json }}</pre></div>
+                  </div>
+                </div>
+
+                <!-- Manual form -->
+                <div *ngIf="mode === 'manual'">
+                  <form [formGroup]="compteurForm" (ngSubmit)="saveCompteur()">
+                  <div class="row">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="serialNumberInput"
+                          >N° Compteur*</label
+                        >
+                        <input type="hidden" formControlName="id" />
+                        <input
+                          id="serialNumberInput"
+                          formControlName="serialNumber"
+                          class="form-control"
+                          [ngClass]="{
+                            'is-invalid':
+                              compteurForm.get('serialNumber')?.invalid &&
+                              compteurForm.get('serialNumber')?.touched,
+                            'is-valid':
+                              compteurForm.get('serialNumber')?.valid &&
+                              compteurForm.get('serialNumber')?.touched
+                          }"
+                        />
+                        @if(compteurForm.controls['serialNumber'].errors?.['required'])
+                        {
+                        <div class="invalid-feedback">
+                          Veuillez sélectionner le partenaire associé
+                        </div>
+                        }
+                        @if(compteurForm.controls['serialNumber'].errors?.['minLength'])
+                        {
+                        <div class="invalid-feedback">
+                          Minimum 10 caractères requis
+                        </div>
+                        }
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="meterSource"
+                          >Meter Source</label
+                        >
+                        <input
+                          id="meterSource"
+                          formControlName="meterSource"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="modele">Modèle</label>
+                        <input
+                          id="modele"
+                          formControlName="modele"
+                          class="form-control"
+                          type="text"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="algorithme"
+                          >Algorithme</label
+                        >
+                        <input
+                          id="algorithme"
+                          formControlName="algorithme"
+                          class="form-control"
+                          type="text"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="sgc">SGC</label>
+                        <input
+                          id="sgc"
+                          formControlName="sgc"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="tariff">Tariff</label>
+                        <input
+                          id="tariff"
+                          formControlName="tariff"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="krn">KRN</label>
+                        <input
+                          id="krn"
+                          formControlName="krn"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="ken">KEN</label>
+                        <input
+                          id="ken"
+                          formControlName="ken"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="tokenTech"
+                          >Token Tech</label
+                        >
+                        <input
+                          id="tokenTech"
+                          formControlName="tokenTech"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="fabricant"
+                          >Fabricant</label
+                        >
+                        <select
+                          formControlName="fabricant"
+                          class="form-select mb-2"
+
+                          [ngClass]="{
+                            'is-invalid':
+                              compteurForm.get('fabricant')?.invalid &&
+                              compteurForm.get('fabricant')?.touched,
+                            'is-valid':
+                              compteurForm.get('fabricant')?.valid &&
+                              compteurForm.get('fabricant')?.touched
+                          }"
+                        >
+                          <option value="" disabled selected>
+                            Choisir un fabricant
+                          </option>
+                          @for (fabricant of fabricants; track $index) {
+                          <option value="{{ fabricant.id }}">
+                            {{ fabricant.name }}
+                          </option>
+                          }
+                        </select>
+                        @if(compteurForm.controls['fabricant'].errors?.['required'])
+                        {
+                        <div class="invalid-feedback">
+                          Veuillez sélectionner le partenaire associé
+                        </div>
+                        }
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="dateFabrication"
+                          >Date de fabrication</label
+                        >
+                        <input
+                          id="dateFabrication"
+                          formControlName="dateFabrication"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="puissance"
+                          >Puissance</label
+                        >
+                        <input
+                          id="puissance"
+                          formControlName="puissance"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="stsVersion"
+                          >STS Version</label
+                        >
+                        <input
+                          id="stsVersion"
+                          formControlName="stsVersion"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="dateBase"
+                          >Base Date</label
+                        >
+                        <input
+                          id="dateBase"
+                          formControlName="dateBase"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                      <div class="mb-3">
+                        <label class="form-label" for="statut">Statut</label>
+                        <input
+                          id="statut"
+                          formControlName="statut"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="mt-3 text-center">
+                        <button
+                          class="btn btn-outline-secondary me-2"
+                          type="button"
+                          (click)="cancel()"
+                        >
+                          Annuler
+                        </button>
+                        <button class="btn btn-primary" [disabled]="compteurForm.invalid">
+                          <i
+                            class="fa"
+                            [ngClass]="{
+                              'fa-spin fa-spinner': loadingBtn,
+                              'fa-check': !loadingBtn
+                            }"
+                          ></i>
+                          {{ textButton }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

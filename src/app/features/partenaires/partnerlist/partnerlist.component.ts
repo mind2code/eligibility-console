@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-partnerlist',
   imports: [RouterModule, FormsModule, ReactiveFormsModule, MatSortModule, SharedModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent,
-    FooterComponent, ModalModule, NgxMaskDirective, SwalComponent, SwalDirective],
+    FooterComponent, ModalModule, NgxMaskDirective],
   templateUrl: './partnerlist.component.html',
   styleUrl: './partnerlist.component.scss',
   providers: [BsModalService]

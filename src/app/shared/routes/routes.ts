@@ -13,6 +13,9 @@ export const routes = {
   //Vendeur
   vendeurList: '/vendeurs/liste-vendeurs',
   vendeurForm: '/vendeurs/form-vendeurs',
+  // Compteur
+  compteurList: '/compteurs/liste-compteurs',
+  compteurForm: '/compteurs/form-compteurs',
   // compteList: '/comptes/liste-comptes',
 
   // auth routes

@@ -1,5 +1,5 @@
 
-export type Partner = {
+export interface Partner {
   id: string;
   code: string;
   name: string;

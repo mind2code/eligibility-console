@@ -19,8 +19,8 @@
           "options": {
             "outputPath": "dist/template",
             "polyfills": [
-                            "zone.js"
-                        ],
+              "zone.js"
+            ],
             "index": "src/index.html",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
@@ -42,7 +42,7 @@
               }
             ],
             "styles": [
-               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "./node_modules/ngx-lightbox/lightbox.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -74,15 +74,14 @@
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
-            
           },
           "configurations": {
             "production": {
-                "optimization": {
-                  "scripts": true,
-                  "styles": true,
-                  "fonts": false
-                },
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -108,7 +107,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": { 
+            "production": {
               "buildTarget": "template:build:production"
             },
             "development": {
@@ -123,8 +122,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": 
-            [
+            "polyfills": [
               "zone.js",
               "zone.js/testing",
               "@angular/localize/init"
@@ -141,6 +139,15 @@
               "src/styles.scss"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
@@ -152,6 +159,9 @@
     }
   },
   "cli": {
-    "analytics": "eb1527b4-fac2-49d9-b484-150d131ba2cf"
+    "analytics": "eb1527b4-fac2-49d9-b484-150d131ba2cf",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }
