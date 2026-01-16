@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core"
+import { Injectable, inject } from "@angular/core"
 import { url_path } from "../constants/endpoints.constant"
 import { Utilisateur } from "../model/utilisateur.model"
 import { ApiRequestService } from "./globals/api-request.service"
@@ -7,8 +7,7 @@ import { ApiRequestService } from "./globals/api-request.service"
     providedIn: 'root'
 })
 export class UserKeycloakService {
-    constructor(private _apiRequestService: ApiRequestService) {
-    }
+    private _apiRequestService = inject(ApiRequestService)
 
     createUser(userKeycloak: Utilisateur) {
         return this._apiRequestService.post({ endpoint: url_path.UTILISATEURS, data: userKeycloak })

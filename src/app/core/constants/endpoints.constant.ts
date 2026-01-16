@@ -6,4 +6,5 @@ export const url_path = {
     DICTIONNAIRES:'/dictionnaires',
     VENDEURS:'/vendeur',
     UTILISATEURS:'/keycloak',
+    TRANSACTIONS:'/transactions',
 }

@@ -1,0 +1,304 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des utilisateurs"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
+              <i class="ti ti-file-export me-1"></i>Export
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Exporter en PDF</a
+                >
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Exporter en Excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-2">
+          <a class="btn btn-primary d-flex align-items-center"
+              routerLink="/utilisateurs/liste-utilisateurs"
+            ><i class="ti ti-circle-plus me-2"></i>Liste Utilisateurs</a
+          >
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Formulaire des Utilisateurs</h5>
+        <div
+          class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
+        ></div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body border-bottom">
+                <h5>
+                  Les champs marqués <span class="text-danger">*</span>sont
+                  obligatoires
+                </h5>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="firstName"
+                        >Prénom <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-control"
+                        formControlName="firstName"
+                        required
+                        placeholder="Ex: John"
+                        [ngClass]="{
+                          'is-invalid':
+                            userForm.get('firstName')?.invalid &&
+                            userForm.get('firstName')?.touched,
+                          'is-valid':
+                            userForm.get('firstName')?.valid &&
+                            userForm.get('firstName')?.touched
+                        }"
+                      />
+                      @if (userForm.get('firstName')?.invalid &&
+                      userForm.get('firstName')?.touched) {
+                      <div class="invalid-feedback">
+                        Le prénom est requis.
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="lastName"
+                        >Nom <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="lastName"
+                        class="form-control"
+                        formControlName="lastName"
+                        required
+                        placeholder="Ex: DOE"
+                        [ngClass]="{
+                          'is-invalid':
+                            userForm.get('lastName')?.invalid &&
+                            userForm.get('lastName')?.touched,
+                          'is-valid':
+                            userForm.get('lastName')?.valid &&
+                            userForm.get('lastName')?.touched
+                        }"
+                      />
+                      @if (userForm.get('lastName')?.invalid &&
+                      userForm.get('lastName')?.touched) {
+                      <div class="invalid-feedback">
+                        Le nom est requis.
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        formControlName="email"
+                        placeholder="Ex: example@email.com"
+                        [ngClass]="{
+                          'is-invalid':
+                            userForm.get('email')?.invalid &&
+                            userForm.get('email')?.touched,
+                          'is-valid':
+                            userForm.get('email')?.valid &&
+                            userForm.get('email')?.touched
+                        }"
+                      />
+                      @if (userForm.get('email')?.errors?.['email']) {
+                      <div class="invalid-feedback">
+                        Format d'email incorrecte.
+                      </div>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="phone">N° Téléphone</label>
+                      <input
+                        type="text"
+                        id="phone"
+                        class="form-control"
+                        formControlName="phone"
+                        placeholder="00 00 00 00 00"
+                      />
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="username"
+                        >Nom d'utilisateur
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="username"
+                        class="form-control"
+                        [disabled]="isEditMode"
+                        formControlName="username"
+                        placeholder="Ex: login"
+                        required
+                        [ngClass]="{
+                          'is-invalid':
+                            userForm.get('username')?.invalid &&
+                            userForm.get('username')?.touched,
+                          'is-valid':
+                            userForm.get('username')?.valid &&
+                            userForm.get('username')?.touched
+                        }"
+                      />
+                      @if (userForm.controls['username'].errors?.['required'])
+                      {
+                      <div class="invalid-feedback">
+                        Le nom d'utilisateur est requis
+                      </div>
+                      }
+                    </div>
+                    <div class="col-sm-6 col-md-4 mt-3" [hidden]="isEditMode">
+                      <label for="password"
+                        >Mot de passe <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="password"
+                        class="form-control"
+                        placeholder="Ex: Mot de passe"
+                        readonly
+                        value="Azerty@2025"
+                      />
+                      <div class="form-text">
+                        L'utilisateur pourra modifier son mot de passe lors de sa
+                        1ère connexion
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="role"
+                        >Rôle <span class="text-danger">*</span></label
+                      >
+                      <select
+                        id="role"
+                        class="form-select"
+                        formControlName="role"
+                        required
+                        [ngClass]="{
+                          'is-invalid':
+                            userForm.get('role')?.invalid &&
+                            userForm.get('role')?.touched,
+                          'is-valid':
+                            userForm.get('role')?.valid &&
+                            userForm.get('role')?.touched
+                        }"
+                      >
+                        <option value="">Sélectionner un rôle</option>
+                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                      </select>
+                      @if (userForm.controls['role'].errors?.['required']) {
+                      <div class="invalid-feedback">
+                        Veuillez sélectionner un rôle
+                      </div>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-sm-6 col-md-4 mt-3">
+                      <label for="">Statut de l'utilisateur</label>
+                      <div class="form-check form-switch form-switch-lg mb-3">
+                        <input
+                          type="checkbox"
+                          id="flexSwitchCheckChecked"
+                          class="form-control form-check-input"
+                          formControlName="enable"
+                        />
+                        <label
+                          for="flexSwitchCheckChecked"
+                          class="form-check-label"
+                        >
+                          {{
+                            userForm.get("enable")?.value
+                              ? "Activé"
+                              : "Désactivé"
+                          }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  @if (apiCallError) {
+                  <div class="mb-3">
+                    <div
+                      class="alert alert-danger d-flex align-items-center"
+                      role="alert"
+                    >
+                      <i class="fa fa-warning flex-shrink-0 me-2"></i>
+                      <div>
+                        {{ apiCallError }}
+                      </div>
+                    </div>
+                  </div>
+                  }
+                  <div class="row mt-3">
+                    <div class="col-lg-12 text-center">
+                      <button
+                        class="btn btn-outline-secondary me-2"
+                        type="button"
+                        (click)="cancel()"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        type="submit"
+                        class="btn btn-primary rounded-2"
+                        [disabled]="userForm.invalid || loadingBtn"
+                      >
+                        <i
+                          class="fa"
+                          [ngClass]="{
+                            'fa-spin fa-spinner': loadingBtn,
+                            'fa-check': !loadingBtn
+                          }"
+                        ></i>
+                        {{ textButton }}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

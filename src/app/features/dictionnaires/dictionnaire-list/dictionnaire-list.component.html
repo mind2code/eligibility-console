@@ -1,0 +1,460 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des dictionnaires"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <div class="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
+              <i class="ti ti-file-export me-1"></i>Export
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-3">
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Exporter en PDF</a
+                >
+              </li>
+              <li>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Exporter en Excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mb-2">
+          <a
+            (click)="openModal(addDictionnaireModal, null)"
+            class="btn btn-primary d-flex align-items-center"
+            ><i class="ti ti-circle-plus me-2"></i>Ajouter Dictionnaire</a
+          >
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Liste des Dictionnaires</h5>
+        <div
+          class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
+        ></div>
+      </div>
+      <div class="card-body">
+        <div class="custom-datatable-filter">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label>
+                    Ligne Affichées :
+                    <select
+                      [(ngModel)]="size"
+                      (ngModelChange)="changePage(size)"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <select class="form-select form-select-xs me-2" [(ngModel)]="selectedCategory" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onCategoryChange($event)">
+                          <option value="">Toutes catégories</option>
+                          @for (c of categories; track $index) {
+                            <option [value]="c">{{ c }}</option>
+                          }
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                        <div class="d-flex">
+                          <div id="DataTables_Table_0_filter" class="dataTables_filter flex-fill">
+                            <label>
+                              <input
+                                [(ngModel)]="searchDataValue"
+                                [ngModelOptions]="{ standalone: true }"
+                                (ngModelChange)="searchData(searchDataValue)"
+                                type="search"
+                                class="form-control form-control-sm"
+                                placeholder="Rechercher..."
+                              />
+                            </label>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="row dt-row">
+              <div class="col-sm-12 table-responsive">
+                <table class="table table-center table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th class="col">#</th>
+                      <th class="col">Nom</th>
+                      <th class="col">Code</th>
+                      <th class="col">Catégorie</th>
+                      <th class="col">Type</th>
+                      <th class="col">Description</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (dictionnaire of dictionnaires; track $index) {
+                    <tr>
+                      <th scope="row">{{ $index + 1 }}</th>
+                      <td class="fw-bold">{{ dictionnaire.name }}</td>
+                      <td class="fw-bold">{{ dictionnaire.code }}</td>
+                      <td>{{ dictionnaire.categorie }}</td>
+                      <td>{{ dictionnaire.type }}</td>
+                      <td>{{ dictionnaire.description }}</td>
+                      <td>
+                        <div class="action-icon d-inline-flex">
+                          <a
+                            class="me-2"
+                            (click)="
+                              openModal(addDictionnaireModal, dictionnaire, true)
+                            "
+                            ><i class="ti ti-edit"></i
+                          ></a>
+
+                          <a
+                            (click)="
+                              openModal(
+                                deleteDictionnaireModal,
+                                dictionnaire,
+                                false,
+                                false,
+                                true
+                              )
+                            "
+                            ><i class="ti ti-trash"></i
+                          ></a>
+                        </div>
+                      </td>
+                    </tr>
+                    } @if (dictionnaires.length === 0) {
+                    <tr>
+                      <td colspan="7">
+                        <h5 class="no-record">Aucun dictionnaire trouvé</h5>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-5">
+                <div class="dataTables_info">
+                  @if(apiResponse.current_page!==undefined){ Affichage de
+                  <b>{{
+                    apiResponse.current_page * apiResponse.page_size + 1
+                  }}</b>
+                  à
+                  <b>
+                    @if (apiResponse.current_page+1===apiResponse.total_pages) {
+                    {{ apiResponse.total_items }}
+                    } @else {
+                    {{ (apiResponse.current_page + 1) * apiResponse.page_size }}
+                    }
+                  </b>
+                  sur
+                  <b>{{ apiResponse.total_items }}</b>
+                  }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                  }
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-7">
+                <div class="dataTables_paginate paging_simple_numbers">
+                  <nav aria-label="Page navigation" class="pagination-style-4">
+                    <ul class="pagination mb-0 flex-wrap">
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled: apiResponse!.current_page === 0
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          href="javascript:void(0);"
+                          [ngClass]="{
+                            'text-primary': apiResponse!.current_page !== 0
+                          }"
+                          (click)="changePage('prev')"
+                        >
+                          <i class="ti ti-chevron-left"></i>
+                        </a>
+                      </li>
+                      <li
+                        class="bg-primary text-white page-item d-flex align-items-center justify-content-center me-2 ms-2 ps-2 pe-2"
+                      >
+                        <span
+                          >Page @if(apiResponse.current_page!==undefined){
+                          {{
+                            apiResponse.current_page +
+                              1 +
+                              " / " +
+                              apiResponse.total_pages
+                          }}
+                          }@else {
+                          {{ page }} / {{ page }} }</span
+                        >
+                      </li>
+
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled:
+                            apiResponse!.current_page + 1 ===
+                            apiResponse!.total_pages
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          [ngClass]="{
+                            'text-primary':
+                              apiResponse!.current_page + 1 !==
+                              apiResponse!.total_pages
+                          }"
+                          href="javascript:void(0);"
+                          (click)="changePage('next')"
+                        >
+                          <i class="ti ti-chevron-right"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for adding/editing dictionnaire -->
+<ng-template #addDictionnaireModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{ txtModalHeader }}</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="dictionnaireForm" (submit)="saveDictionnaire()" class="px-3">
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="name" class="form-label">Libéllé</label>
+          <input
+            class="form-control"
+            type="text"
+            id="name"
+            placeholder="Nom du dictionnaire"
+            formControlName="name"
+            [ngClass]="{
+              'is-invalid':
+                dictionnaireForm.get('name')?.invalid &&
+                dictionnaireForm.get('name')?.touched,
+              'is-valid':
+                dictionnaireForm.get('name')?.valid &&
+                dictionnaireForm.get('name')?.touched
+            }"
+          />
+          @if (dictionnaireForm.get('name')?.invalid &&
+          dictionnaireForm.get('name')?.touched) {
+          <div class="invalid-feedback">Le libéllé du dictionnaire est requis.</div>
+          }
+        </div>
+        <!-- <div class="mb-3">
+          <label for="code" class="form-label">Code</label>
+          <input
+            class="form-control"
+            type="text"
+            id="code"
+            placeholder="Code du dictionnaire"
+            formControlName="code"
+            [ngClass]="{
+              'is-invalid':
+                dictionnaireForm.get('code')?.invalid &&
+                dictionnaireForm.get('code')?.touched,
+              'is-valid':
+                dictionnaireForm.get('code')?.valid &&
+                dictionnaireForm.get('code')?.touched
+            }"
+          />
+          @if (dictionnaireForm.get('code')?.invalid &&
+          dictionnaireForm.get('code')?.touched) {
+          <div class="invalid-feedback">Le code du dictionnaire est requis.</div>
+          }
+        </div> -->
+        <div class="mb-3">
+          <label for="categorie" class="form-label">Catégorie</label>
+          <input
+            class="form-control"
+            type="text"
+            id="categorie"
+            placeholder="Catégorie"
+            formControlName="categorie"
+            [ngClass]="{
+              'is-invalid':
+                dictionnaireForm.get('categorie')?.invalid &&
+                dictionnaireForm.get('categorie')?.touched,
+              'is-valid':
+                dictionnaireForm.get('categorie')?.valid &&
+                dictionnaireForm.get('categorie')?.touched
+            }"
+          />
+          @if (dictionnaireForm.get('categorie')?.invalid &&
+          dictionnaireForm.get('categorie')?.touched) {
+          <div class="invalid-feedback">La catégorie est requise.</div>
+          }
+        </div>
+        <div class="mb-3">
+          <label for="type" class="form-label">Type</label>
+          <input
+            class="form-control"
+            type="text"
+            id="type"
+            placeholder="Type"
+            formControlName="type"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            id="description"
+            placeholder="Description"
+            formControlName="description"
+            rows="3"
+          ></textarea>
+        </div>
+        <!-- <div class="mb-3">
+          <label for="parentCode" class="form-label">Code Parent</label>
+          <input
+            class="form-control"
+            type="text"
+            id="parentCode"
+            placeholder="Code Parent"
+            formControlName="parentCode"
+          />
+        </div> -->
+
+        @if (apiCallError) {
+        <div class="mb-3">
+          <div
+            class="alert alert-danger d-flex align-items-center"
+            role="alert"
+          >
+            <i class="fa fa-warning flex-shrink-0 me-2"></i>
+            <div>
+              {{ apiCallError.message }}
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-cancel me-2"
+          (click)="modalRef?.hide()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="dictionnaireForm.invalid"
+        >
+          <i
+            class="fa"
+            [ngClass]="{
+              'fa-spin fa-spinner': loadingBtn,
+              'fa-check': !loadingBtn
+            }"
+          ></i>
+          {{ textButton }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- End Modal for adding/editing dictionnaire -->
+
+<!-- Modal for deleting dictionnaire -->
+<ng-template #deleteDictionnaireModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{ txtModalHeader }}</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Êtes-vous sûr de vouloir supprimer ce dictionnaire ?</p>
+    <p class="fw-bold">{{ dictionnaire?.name }}</p>
+
+    @if (apiCallError) {
+    <div class="mb-3">
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="fa fa-warning flex-shrink-0 me-2"></i>
+        <div>
+          {{ apiCallError.message }}
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-cancel me-2" (click)="modalRef?.hide()">
+      Annuler
+    </button>
+    <button type="submit" class="btn btn-danger" (click)="delete()">
+      <i
+        class="fa"
+        [ngClass]="{
+          'fa-spin fa-spinner': loadingBtn,
+          'fa-trash': !loadingBtn
+        }"
+      ></i>
+      {{ textButton }}
+    </button>
+  </div>
+</ng-template>
+<!-- End Modal for deleting dictionnaire -->

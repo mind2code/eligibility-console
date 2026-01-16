@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router';
 import { SideBar, SideBarMenu } from '../../../shared/models/models';
 import { DataService } from '../../../shared/data/data.service';
@@ -24,12 +24,13 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
   openMenuItem: any = null;
   openSubmenuOneItem: any = null;
   side_bar_data: SideBar[] = [];
-  constructor(
-    public router: Router,
-    private data: DataService,
-    private sideBar: SideBarService,
-    private common: CommonService
-  ) {
+
+  private router = inject(Router);
+  private data = inject(DataService);
+  private sideBar = inject(SideBarService);
+  private common = inject(CommonService);
+
+  constructor() {
 
 
     // get sidebar data as observable because data is controlled for design to expand submenus

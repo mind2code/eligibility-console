@@ -46,6 +46,26 @@ export const routes: Routes = [
         children: [
           { path: 'liste-comptes', loadComponent: () => import('./features/comptes/comptelist/comptelist.component').then(m => m.CompletListComponent) },
         ]
+      },
+      {
+        path: 'dictionnaires', loadComponent: () => import('./features/dictionnaires/dictionnaires.component').then(m => m.DictionnairesComponent),
+        children: [
+          { path: 'liste-dictionnaires', loadComponent: () => import('./features/dictionnaires/dictionnaire-list/dictionnaire-list.component').then(m => m.DictionnaireListComponent) },
+        ]
+      },
+      {
+        path: 'utilisateurs', loadComponent: () => import('./features/utilisateurs/utilisateurs.component').then(m => m.UtilisateursComponent),
+        children: [
+          { path: 'liste-utilisateurs', loadComponent: () => import('./features/utilisateurs/user-list/user-list.component').then(m => m.UserListComponent) },
+          { path: 'form', loadComponent: () => import('./features/utilisateurs/user-form/user-form.component').then(m => m.UserFormComponent) },
+          { path: 'form/:id', loadComponent: () => import('./features/utilisateurs/user-form/user-form.component').then(m => m.UserFormComponent) },
+        ]
+      },
+      {
+        path: 'transactions', loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent),
+        children: [
+          { path: 'liste-transactions', loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent) },
+        ]
       }
 
     ]

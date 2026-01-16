@@ -13,10 +13,22 @@ export const routes = {
   //Vendeur
   vendeurList: '/vendeurs/liste-vendeurs',
   vendeurForm: '/vendeurs/form-vendeurs',
+
+  //Utilisateur
+  userList: '/utilisateurs/liste-utilisateurs',
+  userForm: '/utilisateurs/form-utilisateurs',
   // Compteur
   compteurList: '/compteurs/liste-compteurs',
   compteurForm: '/compteurs/form-compteurs',
   // compteList: '/comptes/liste-comptes',
+
+  //Dictionnaires
+  dictionnaireList: '/dictionnaires/liste-dictionnaires',
+  dictionnaireForm: '/dictionnaires/form-dictionnaires',
+
+  //Transactions
+  transactionAchatsList: '/transactions/liste-transactions',
+  transactionDetteList: '/transactions/debt-transactions',
 
   // auth routes
   signin: '/signin',

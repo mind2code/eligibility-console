@@ -5,7 +5,7 @@
       class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
     >
       <app-breadcrumbs
-        title="Gestion des compteurs"
+        title="Gestion des utilisateurs"
         [breadcrumbItems]="breadCrumbItems"
       ></app-breadcrumbs>
       <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
@@ -34,9 +34,9 @@
         </div>
         <div class="mb-2">
           <a
-            (click)="formCompteur()"
+            (click)="formUser()"
             class="btn btn-primary d-flex align-items-center"
-            ><i class="ti ti-circle-plus me-2"></i>Ajouter Compteur</a
+            ><i class="ti ti-circle-plus me-2"></i>Ajouter Utilisateur</a
           >
         </div>
         <app-collapse-header></app-collapse-header>
@@ -48,7 +48,7 @@
       <div
         class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
       >
-        <h5>Liste des Compteurs</h5>
+        <h5>Liste des Utilisateurs</h5>
         <div
           class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
         ></div>
@@ -80,8 +80,7 @@
                     <input
                       [(ngModel)]="searchDataValue"
                       [ngModelOptions]="{ standalone: true }"
-                      (ngModelChange)="onSearchInputChange(searchDataValue)"
-                      (keydown.enter)="searchData(searchDataValue)"
+                      (ngModelChange)="searchData(searchDataValue)"
                       type="search"
                       class="form-control form-control-sm"
                       placeholder="Rechercher..."
@@ -96,41 +95,64 @@
                   <thead>
                     <tr>
                       <th class="col">#</th>
-                      <th>Serial</th>
-                      <th>Fabricant</th>
-                      <th>Type</th>
-                      <th>Base Date</th>
-                      <th>Algorithme</th>
-                      <th>KRN</th>
+                      <th class="col">Prénom</th>
+                      <th class="col">Nom</th>
+                      <th class="col">Email</th>
+                      <th class="col">Téléphone</th>
+                      <th class="col">Login</th>
+                      <th class="col">Rôle</th>
+                      <th class="col">Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @for (compteur of compteurs; track $index) {
+                    @for (utilisateur of utilisateurs; track $index) {
                     <tr>
                       <th scope="row">{{ $index + 1 }}</th>
-                      <td class="fw-bold">
-                        {{ compteur.serialNumber }}
+                      <td class="fw-bold">{{ utilisateur.firstName }}</td>
+                      <td class="fw-bold">{{ utilisateur.lastName }}</td>
+                      <td>{{ utilisateur.email }}</td>
+                      <td>{{ utilisateur.phone }}</td>
+                      <td class="fw-bold">{{ utilisateur.username }}</td>
+                      <td class="fw-bold text-secondary">
+                        {{ utilisateur.role }}
                       </td>
-                      <td>{{ compteur.fabricant?.name }}</td>
-                      <td><span
+                      <td>
+                        <span
                           class="badge d-inline-flex align-items-center badge-xs"
                           [ngClass]="
-                            compteur.stsVersion?.replaceAll(' ', '') === 'STS6' ? 'badge-success' : 'badge-danger'
+                            utilisateur.enable ? 'badge-success' : 'badge-danger'
                           "
                         >
                           <i class="ti ti-point-filled me-1"></i
-                          >{{ compteur.stsVersion }}
-                        </span></td>
-                      <td>{{ compteur.dateBase }}</td>
-                      <td>{{ compteur.algorithme }}</td>
-                      <td>{{ compteur.krn }}</td>
+                          >{{ utilisateur.enable ? "Actif" : "Inactif" }}
+                        </span>
+                      </td>
                       <td>
                         <div class="action-icon d-inline-flex">
                           <a
-                            (click)="formCompteur(true, compteur.id)"
                             class="me-2"
-                            title="Modifier le compteur"
+                            (click)="changeStatus(utilisateur)"
+                            title="{{
+                              utilisateur.enable ? 'Désactiver' : 'Activer'
+                            }} l'utilisateur"
+                            ><i
+                              class="bi"
+                              [ngClass]="
+                                utilisateur.enable ? 'bi-pause' : 'bi-play'
+                              "
+                            ></i
+                          ></a>
+                          <a
+                            class="me-2"
+                            (click)="openModal(
+                                templatePassword,
+                                utilisateur
+                              )"
+                            title="Réinitialiser le mot de passe de l'utilisateur"
+                            ><i class="bi bi-arrow-repeat"></i
+                          ></a>
+                          <a (click)="formUser(true, utilisateur.id)" class="me-2" title="Modifier l'utilisateur"
                             ><i class="ti ti-edit"></i
                           ></a>
 
@@ -138,19 +160,19 @@
                             (click)="
                               openModal(
                                 deleteModal,
-                                compteur
+                                utilisateur
                               )
                             "
-                            title="Supprimer le compteur"
+                            title="Supprimer l'utilisateur"
                             ><i class="ti ti-trash"></i
                           ></a>
                         </div>
                       </td>
                     </tr>
-                    } @if (compteurs.length === 0) {
+                    } @if (utilisateurs.length === 0) {
                     <tr>
-                      <td colspan="12">
-                        <h5 class="no-record">Aucun compteur trouvé</h5>
+                      <td colspan="9">
+                        <h5 class="no-record">Aucun utilisateur trouvé</h5>
                       </td>
                     </tr>
                     }
@@ -252,7 +274,7 @@
 </div>
 
 <ng-template #deleteModal let-modal>
-  <!-- Modal for deleting partner -->
+  <!-- Modal for deleting utilisateur -->
   <div class="modal-header">
     <h4 class="modal-title pull-left">{{ txtModalHeader }}</h4>
     <button
@@ -266,8 +288,8 @@
   </div>
   <div class="modal-body">
     <p>
-      Êtes-vous sûr de vouloir supprimer le compteur
-      <b>{{ compteur?.serialNumber }}</b> ?
+      Êtes-vous sûr de vouloir supprimer l'utilisateur
+      <b>{{ utilisateur?.firstName + " " + utilisateur?.lastName }}</b> ?
     </p>
   </div>
   <div class="modal-footer">
@@ -291,5 +313,76 @@
       </button>
     </div>
   </div>
-  <!-- End Modal for deleting partner -->
+  <!-- End Modal for deleting utilisateur -->
+</ng-template>
+
+<!--Modal Password Reset-->
+<ng-template #templatePassword>
+  <form (ngSubmit)="reinitPassword()">
+    <div class="modal-header">
+      <h5 class="modal-title pull-left">Réinitialisation de mot de passe</h5>
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <label for="password"
+            >Nouveau Mot de passe <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            [formControl]="newPassword"
+            id="password"
+            class="form-control"
+            name="password"
+            required
+            [ngClass]="{
+              'is-invalid': newPassword.invalid && newPassword.touched,
+              'is-valid': newPassword.valid && newPassword.touched
+            }"
+          />
+
+          @if (newPassword.errors?.['required']) {
+          <div class="invalid-feedback">Veuillez renseigner le nouveau mot de passe.</div>
+          }
+          @if (newPassword.errors?.['minlength']) {
+          <div class="invalid-feedback">Veuillez renseigner 5 caractères minimum.</div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="hstack gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-light"
+          data-bs-dismiss="modal"
+          (click)="modalRef?.hide()"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-danger rounded-2"
+          [disabled]="!newPassword.valid && !loadingBtn"
+        >
+          <i
+            class="fa"
+            [ngClass]="{
+              'fa-spin fa-spinner': loadingBtn,
+              'fa-check': !loadingBtn
+            }"
+          ></i>
+          {{ textButton }}
+        </button>
+      </div>
+    </div>
+  </form>
 </ng-template>

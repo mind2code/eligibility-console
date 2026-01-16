@@ -1,0 +1,314 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Gestion des transactions"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <app-collapse-header></app-collapse-header>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Consulter les Transactions</h5>
+      </div>
+      <div class="card-body">
+        <!-- Search Form -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h6>Critères de Recherche</h6>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="searchForm" (ngSubmit)="search()">
+              <div class="row">
+                <div class="col-sm-6 col-md-4 mb-3">
+                  <label for="searchType" class="form-label">Type de Recherche <span class="text-danger">*</span></label>
+                  <select
+                    id="searchType"
+                    class="form-select"
+                    formControlName="searchType"
+                    (change)="onSearchTypeChange($event)"
+                    [ngClass]="{
+                      'is-invalid':
+                        searchForm.get('searchType')?.invalid &&
+                        searchForm.get('searchType')?.touched,
+                      'is-valid':
+                        searchForm.get('searchType')?.valid &&
+                        searchForm.get('searchType')?.touched
+                    }"
+                  >
+                    <option value="">Sélectionner un critère</option>
+                    <option value="transID">ID Transaction</option>
+                    <option value="meterNum">Compteur</option>
+                    <option value="date">Date</option>
+                    <option value="partner">Partenaire</option>
+                  </select>
+                  @if (searchForm.get('searchType')?.invalid &&
+                  searchForm.get('searchType')?.touched) {
+                  <div class="invalid-feedback">
+                    Veuillez sélectionner un critère de recherche.
+                  </div>
+                  }
+                </div>
+
+                <div class="col-sm-6 col-md-4 mb-3">
+                  <label for="searchValue" class="form-label">
+                    @switch (searchType) {
+                      @case ('transID') { ID Transaction }
+                      @case ('meterNum') { Numéro Compteur }
+                      @case ('date') { Date (JJ-MM-AAAA) }
+                      @case ('partner') { Partenaire }
+                      @default { Valeur }
+                    }
+                    <span class="text-danger">*</span>
+                  </label>
+                  @if (searchType === 'partner') {
+                    <select
+                      id="searchValue"
+                      class="form-select"
+                      formControlName="searchValue"
+                      [ngClass]="{
+                        'is-invalid':
+                          searchForm.get('searchValue')?.invalid &&
+                          searchForm.get('searchValue')?.touched,
+                        'is-valid':
+                          searchForm.get('searchValue')?.valid &&
+                          searchForm.get('searchValue')?.touched
+                      }"
+                    >
+                      <option value="">Sélectionner un partenaire</option>
+                      @for (partner of partners; track partner.id) {
+                        <option [value]="partner.name">{{ partner.name }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <input
+                      type="text"
+                      id="searchValue"
+                      class="form-control"
+                      formControlName="searchValue"
+                      [placeholder]="
+                        searchType === 'date' ? 'JJ-MM-AAAA' : 'Entrer la valeur'
+                      "
+                      [ngClass]="{
+                        'is-invalid':
+                          searchForm.get('searchValue')?.invalid &&
+                          searchForm.get('searchValue')?.touched,
+                        'is-valid':
+                          searchForm.get('searchValue')?.valid &&
+                          searchForm.get('searchValue')?.touched
+                      }"
+                    />
+                  }
+                  @if (searchForm.get('searchValue')?.invalid &&
+                  searchForm.get('searchValue')?.touched) {
+                  <div class="invalid-feedback">
+                    Veuillez renseigner la valeur de recherche.
+                  </div>
+                  }
+                </div>
+
+                <div class="col-sm-6 col-md-4 mb-3 d-flex align-items-end">
+                  <button type="submit" class="btn btn-primary w-100" [disabled]="searchForm.invalid || loadingBtn">
+                    <i
+                      class="fa me-2"
+                      [ngClass]="{
+                        'fa-spin fa-spinner': loadingBtn,
+                        'ti ti-search': !loadingBtn
+                      }"
+                    ></i>
+                    {{ loadingBtn ? 'Recherche en cours...' : 'Rechercher' }}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        @if (hasSearched) {
+        <div class="custom-datatable-filter">
+          <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="dataTables_length">
+                  <label>
+                    Ligne Affichées :
+                    <select
+                      [(ngModel)]="size"
+                      (ngModelChange)="changePage(size)"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-6">
+                <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                  <label>
+                    <input
+                      [(ngModel)]="searchDataValue"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="searchData(searchDataValue)"
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Rechercher..."
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row dt-row">
+              <div class="col-sm-12 table-responsive">
+                <table class="table table-center table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th class="col">#</th>
+                      <th class="col">ID Transaction</th>
+                      <th class="col">Partenaire</th>
+                      <th class="col">Système</th>
+                      <th class="col">Montant</th>
+                      <th class="col">Token</th>
+                      <th class="col">Date</th>
+                      <th class="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (transaction of transactions; track $index) {
+                    <tr>
+                      <th scope="row">{{ $index + 1 }}</th>
+                      <td class="fw-bold">{{ transaction.transid }}</td>
+                      <td>{{ transaction.partenaire }}</td>
+                      <td>{{ transaction.system }}</td>
+                      <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                      <td><span class="badge badge-sm badge-info">{{ transaction.token }}</span></td>
+                      <td>{{ transaction.transactionDate }}</td>
+                      <td>
+                        <span
+                          class="badge d-inline-flex align-items-center badge-xs"
+                          [ngClass]="getStatusClass(transaction.status)"
+                        >
+                          <i class="ti ti-point-filled me-1"></i>
+                          {{ getStatusLabel(transaction.status) }}
+                        </span>
+                      </td>
+                    </tr>
+                    } @if (transactions.length === 0) {
+                    <tr>
+                      <td colspan="8">
+                        <h5 class="no-record">Aucune transaction trouvée</h5>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-md-5">
+                <div class="dataTables_info">
+                  @if(apiResponse.current_page!=undefined){ Affichage de
+                  <b>{{
+                    apiResponse.current_page * apiResponse.page_size + 1
+                  }}</b>
+                  à
+                  <b>
+                    @if (apiResponse.current_page+1==apiResponse.total_pages) {
+                    {{ apiResponse.total_items }}
+                    } @else {
+                    {{ (apiResponse.current_page + 1) * apiResponse.page_size }}
+                    }
+                  </b>
+                  sur
+                  <b>{{ apiResponse.total_items }}</b>
+                  }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                  }
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-7">
+                <div class="dataTables_paginate paging_simple_numbers">
+                  <nav aria-label="Page navigation" class="pagination-style-4">
+                    <ul class="pagination mb-0 flex-wrap">
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled: apiResponse!.current_page === 0
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          href="javascript:void(0);"
+                          [ngClass]="{
+                            'text-primary': apiResponse!.current_page !== 0
+                          }"
+                          (click)="changePage('prev')"
+                        >
+                          <i class="ti ti-chevron-left"></i>
+                        </a>
+                      </li>
+                      <li
+                        class="bg-primary text-white page-item d-flex align-items-center justify-content-center me-2 ms-2 ps-2 pe-2"
+                      >
+                        <span
+                          >Page @if(apiResponse.current_page!=undefined){
+                          {{
+                            apiResponse.current_page +
+                              1 +
+                              " / " +
+                              apiResponse.total_pages
+                          }}
+                          }@else {
+                          {{ page }} / {{ page }} }</span
+                        >
+                      </li>
+
+                      <li
+                        class="page-item"
+                        [ngClass]="{
+                          disabled:
+                            apiResponse!.current_page + 1 ===
+                            apiResponse!.total_pages
+                        }"
+                      >
+                        <a
+                          class="page-link"
+                          [ngClass]="{
+                            'text-primary':
+                              apiResponse!.current_page + 1 !==
+                              apiResponse!.total_pages
+                          }"
+                          href="javascript:void(0);"
+                          (click)="changePage('next')"
+                        >
+                          <i class="ti ti-chevron-right"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        } @else {
+        <div class="alert alert-info" role="alert">
+          <i class="ti ti-info-circle me-2"></i>
+          Renseignez les critères de recherche ci-dessus pour afficher les transactions.
+        </div>
+        }
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>

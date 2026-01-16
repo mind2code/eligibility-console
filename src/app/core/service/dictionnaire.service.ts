@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { url_path } from "../constants/endpoints.constant";
 import { ApiPaginatedResponse } from "../model/api-response.model";
@@ -10,9 +10,7 @@ import { ApiRequestService } from "./globals/api-request.service";
   providedIn: 'root',
 })
 export class DictionnaireService {
-
-  constructor(private _apiRequestService: ApiRequestService) {
-  }
+  private _apiRequestService = inject(ApiRequestService);
 
   getAll() {
     return this._apiRequestService.getAll(url_path.DICTIONNAIRES + '/all');
@@ -28,6 +26,7 @@ export class DictionnaireService {
   getCategories() {
     return this._apiRequestService.getAll(url_path.DICTIONNAIRES + '/categories');
   }
+
   getByCategorie(categorie: any) {
     return this._apiRequestService.getByPage({endpoint: url_path.DICTIONNAIRES + '/categorie', paginationData: categorie });
   }
