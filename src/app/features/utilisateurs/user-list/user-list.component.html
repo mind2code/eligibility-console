@@ -115,7 +115,7 @@
                       <td>{{ utilisateur.phone }}</td>
                       <td class="fw-bold">{{ utilisateur.username }}</td>
                       <td class="fw-bold text-secondary">
-                        {{ utilisateur.role }}
+                        {{ utilisateur.roles[0] | uppercase }}
                       </td>
                       <td>
                         <span

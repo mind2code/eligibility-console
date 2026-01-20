@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
-import { MainMenu, Menu } from '../../../shared/models/models';
-import { DataService } from '../../../shared/data/data.service';
-import { CommonService } from '../../../shared/common/common.service';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
-import { routes } from '../../../shared/routes/routes';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { MainMenu, Menu } from '../../../shared/models/models';
+import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
+import Keycloak from 'keycloak-js';
+import { environment } from '../../../../environments/environment';
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-    styleUrl: './default-header.component.scss',
-    imports: [CommonModule,RouterLink,NgScrollbarModule]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  styleUrl: './default-header.component.scss',
+  imports: [CommonModule, RouterLink, NgScrollbarModule],
 })
-export class DefaultHeaderComponent {
+export class DefaultHeaderComponent implements OnInit {
   showSubMenusTab = true;
   public multilevel: boolean[] = [false, false, false];
   openMenuItem: any = null;
@@ -25,6 +27,15 @@ export class DefaultHeaderComponent {
   public miniSidebar = false;
   public baricon = false;
   side_bar_data: MainMenu[] = [];
+
+  userDetails: any
+  userEmail: any
+
+  keycloakUrl = environment.keycloak.host
+  keycloakRealm = environment.keycloak.realm
+
+  private keycloak=inject(Keycloak)
+
   constructor(
     private data: DataService,
     private sideBar: SideBarService,
@@ -77,6 +88,13 @@ export class DefaultHeaderComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.keycloak.loadUserProfile().then(profile => {
+      this.userDetails = profile.firstName + ' ' + profile.lastName
+      this.userEmail = profile.email
+    })
+  }
+
   public toggleSideBar(): void {
     this.sideBar.switchSideMenuPosition();
   }
@@ -110,54 +128,58 @@ export class DefaultHeaderComponent {
       });
     });
   }
-    public miniSideBarMouseHover(position: string): void {
-      this.sideBar.toggleSideBar.subscribe((res: string) => {
-        if (res === 'true' || res === 'true') {
-          if (position === 'over') {
-            this.sideBar.expandSideBar.next(true);
-            this.showSubMenusTab = false;
-          } else {
-            this.sideBar.expandSideBar.next(false);
-            this.showSubMenusTab = true;
-          }
+  public miniSideBarMouseHover(position: string): void {
+    this.sideBar.toggleSideBar.subscribe((res: string) => {
+      if (res === 'true' || res === 'true') {
+        if (position === 'over') {
+          this.sideBar.expandSideBar.next(true);
+          this.showSubMenusTab = false;
+        } else {
+          this.sideBar.expandSideBar.next(false);
+          this.showSubMenusTab = true;
         }
-      });
-    }
-    ngOnDestroy(): void {
-      this.data.resetData2();
-    }
-    miniSideBarBlur(position: string) {
-      if (position === 'over') {
-        this.sideBar.expandSideBar.next(true);
-      } else {
-        this.sideBar.expandSideBar.next(false);
       }
+    });
+  }
+  ngOnDestroy(): void {
+    this.data.resetData2();
+  }
+  miniSideBarBlur(position: string) {
+    if (position === 'over') {
+      this.sideBar.expandSideBar.next(true);
+    } else {
+      this.sideBar.expandSideBar.next(false);
     }
+  }
 
-    miniSideBarFocus(position: string) {
-      if (position === 'over') {
-        this.sideBar.expandSideBar.next(true);
-      } else {
-        this.sideBar.expandSideBar.next(false);
-      }
+  miniSideBarFocus(position: string) {
+    if (position === 'over') {
+      this.sideBar.expandSideBar.next(true);
+    } else {
+      this.sideBar.expandSideBar.next(false);
     }
-    public submenus = false;
-    openSubmenus() {
-      this.submenus = !this.submenus;
-    }
+  }
+  public submenus = false;
+  openSubmenus() {
+    this.submenus = !this.submenus;
+  }
 
-    openMenu(menu: any): void {
-      if (this.openMenuItem === menu) {
-        this.openMenuItem = null;
-      } else {
-        this.openMenuItem = menu;
-      }
+  openMenu(menu: any): void {
+    if (this.openMenuItem === menu) {
+      this.openMenuItem = null;
+    } else {
+      this.openMenuItem = menu;
     }
-    openSubmenuOne(subMenus: any): void {
-      if (this.openSubmenuOneItem === subMenus) {
-        this.openSubmenuOneItem = null;
-      } else {
-        this.openSubmenuOneItem = subMenus;
-      }
+  }
+  openSubmenuOne(subMenus: any): void {
+    if (this.openSubmenuOneItem === subMenus) {
+      this.openSubmenuOneItem = null;
+    } else {
+      this.openSubmenuOneItem = subMenus;
     }
+  }
+
+  logout() {
+    this.keycloak.logout();
+  }
 }

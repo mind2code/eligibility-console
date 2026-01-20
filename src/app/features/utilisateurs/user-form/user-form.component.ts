@@ -38,6 +38,8 @@ export class UserFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  id?: string | null
+
   constructor() {
     this.breadCrumbItems = [
       { label: 'Utilisateurs' },
@@ -62,9 +64,9 @@ export class UserFormComponent implements OnInit {
 
     // check route for id param to load user
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.loadUser(id);
+      this.id = params.get('id');
+      if (this.id) {
+        this.loadUser(this.id);
       }
     });
   }
@@ -83,6 +85,7 @@ export class UserFormComponent implements OnInit {
             }
             return String(r);
           });
+          this.roles = this.roles.filter(role => role == 'admin')
         }
       },
       error: (error) => {
@@ -97,6 +100,8 @@ export class UserFormComponent implements OnInit {
         const respObj = response as Record<string, unknown>;
         const userData = Array.isArray(respObj?.['data']) ? respObj['data'][0] : response;
         this.user = userData as Utilisateur;
+        console.log(this.user);
+
         this.isEditMode = true;
         this.mapObjectToForm(this.user);
       },
@@ -111,6 +116,8 @@ export class UserFormComponent implements OnInit {
     if (this.userForm?.valid) {
       this.changeFormElement();
       const userData = this.userForm.value;
+      userData.roles = []
+      userData.roles.push(userData.role)
       if (this.isEditMode && this.user) userData.id = this.user.id;
 
       const apiCall = this.isEditMode && this.user ? this._userAPI.updateUser(userData) : this._userAPI.createUser(userData);
@@ -141,7 +148,7 @@ export class UserFormComponent implements OnInit {
       username: user?.username,
       email: user?.email,
       phone: user?.phone,
-      role: user?.role,
+      role: user?.roles[0],
       enable: user?.enable ?? true
     });
   }

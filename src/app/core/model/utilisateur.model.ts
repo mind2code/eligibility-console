@@ -7,6 +7,6 @@ export interface Utilisateur {
     phone?: string,
     username?: string,
     password?: string,
-    role?: string,
+    roles?: any,
     enable?:boolean
 }
