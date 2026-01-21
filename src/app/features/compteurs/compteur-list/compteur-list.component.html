@@ -120,11 +120,11 @@
                           "
                         >
                           <i class="ti ti-point-filled me-1"></i
-                          >{{ compteur.stsVersion }}
+                          >{{ compteur.stsVersion || 'Non défini' }}
                         </span></td>
-                      <td>{{ compteur.dateBase }}</td>
-                      <td>{{ compteur.algorithme }}</td>
-                      <td>{{ compteur.krn }}</td>
+                      <td>{{ compteur.dateBase || 'Non défini' }}</td>
+                      <td>{{ compteur.algorithme || 'Non défini' }}</td>
+                      <td>{{ compteur.krn || 'Non défini' }}</td>
                       <td>
                         <div class="action-icon d-inline-flex">
                           <a
