@@ -39,6 +39,7 @@ export class PartnerlistComponent {
   pageTitle = 'Partenaires';
 
   partenaires: Partner[] = []
+  partenairesList: Partner[] = []
   partenairesCopy: Partner[] = []
 
   apiResponse!: ApiPaginatedResponse<Partner>
@@ -63,6 +64,9 @@ export class PartnerlistComponent {
   // Form for parameters
   paramForm!: FormGroup
   parameters: PartnerParam[] = [];
+
+  // Form for JSON configuration
+  jsonConfigForm!: FormGroup;
 
   //Form pour rechargement credit
   formCredit!: FormGroup;
@@ -101,6 +105,7 @@ export class PartnerlistComponent {
       name: ['', Validators.required],
       code: ['', Validators.required],
       phone: [''],
+      minimumBalance: ['0', Validators.compose([Validators.required, Validators.min(0)])],
       email: ['', Validators.compose([Validators.nullValidator, Validators.email])],
     });
 
@@ -108,6 +113,12 @@ export class PartnerlistComponent {
     this.paramForm = this._fb.group({
       partnerId: [null, Validators.required],
       params: this._fb.array([this.initParam(), this.initParam()])
+    });
+
+    // Form for JSON configuration
+    this.jsonConfigForm = this._fb.group({
+      partnerId: [null, Validators.required],
+      jsonConfig: ['', [Validators.required, this.jsonValidator.bind(this)]]
     });
 
     // Form for credit recharge
@@ -131,6 +142,23 @@ export class PartnerlistComponent {
         this.apiResponse = response;
         this.partenaires = response.data;
         this.partenairesCopy = response.data;
+
+        // console.log(this.apiResponse);
+        this.loadAllPartenaire()
+
+      },
+      error: (error) => {
+        console.error("Error fetching partners:", error);
+        this.toastService.error('Erreur', 'Une erreur est survenue lors du chargement des partenaires.');
+      }
+    })
+  }
+  loadAllPartenaire() {
+
+    this._partnerAPI.getAll().subscribe({
+      next: (response) => {
+        console.log(response);
+        this.partenairesList = response.data
 
         // console.log(this.apiResponse);
 
@@ -307,6 +335,49 @@ export class PartnerlistComponent {
     });
   }
 
+  /**
+   * Load partner parameters and convert to JSON format
+   */
+  getPartnerParametersForJson(event: any): void {
+    console.log(event);
+
+    let partnerId: string = event.target.value;
+    partnerId = partnerId.split(":")[1].trim(); // Remove quotes if any
+    if (!partnerId) {
+      // No partner selected - nothing to load
+      return;
+    }
+
+    this._partnerParamService.getAllByPartner(partnerId).subscribe({
+      next: (response) => {
+        console.log('Partner parameters for JSON:', response);
+        
+        if (response.data && response.data.length > 0) {
+          // Convert parameters array to JSON object
+          const jsonObject: { [key: string]: string } = {};
+          response.data.forEach((param: { paramKey: string | number; paramValue: string; }) => {
+            jsonObject[param.paramKey] = param.paramValue;
+          });
+          
+          // Format and populate the JSON field
+          const jsonString = JSON.stringify(jsonObject, null, 2);
+          this.jsonConfigForm.patchValue({
+            jsonConfig: jsonString
+          });
+        } else {
+          // No parameters found, clear the field
+          this.jsonConfigForm.patchValue({
+            jsonConfig: ''
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching partner parameters for JSON:', error);
+        this.toastService.error('Erreur', "Une erreur est survenue lors du chargement des paramètres du partenaire.");
+      }
+    });
+  }
+
   /** Parameters form helpers **/
   initParam(): FormGroup {
     return this._fb.group({
@@ -387,6 +458,82 @@ export class PartnerlistComponent {
   }
 
   /**
+   * JSON Validator - validates if the textarea contains valid JSON
+   */
+  jsonValidator(control: any): { [key: string]: any } | null {
+    if (!control.value) {
+      return null;
+    }
+    try {
+      JSON.parse(control.value);
+      return null;
+    } catch (error) {
+      return { 'invalidJson': { value: control.value } };
+    }
+  }
+
+  /**
+   * Save JSON configuration
+   */
+  saveJsonConfig(): void {
+    if (this.jsonConfigForm.valid) {
+      this.changeFormElement();
+
+      const partnerId = this.jsonConfigForm.value.partnerId;
+      const jsonData = this.jsonConfigForm.value.jsonConfig;
+
+      // Parse JSON and convert to PartnerParamRequest array
+      try {
+        const parsedJson = JSON.parse(jsonData);
+        
+        // Convert each JSON property to a PartnerParamRequest entry
+        const paramRequest: PartnerParamRequest[] = [];
+        for (const [key, value] of Object.entries(parsedJson)) {
+          paramRequest.push({
+            paramKey: key,
+            paramValue: String(value)
+          });
+        }
+
+        this._partnerParamService.save(paramRequest, partnerId).subscribe({
+          next: (response) => {
+            console.log('JSON Configuration saved:', response);
+
+            this.toastService.success('Succès', 'Configuration JSON enregistrée avec succès.').onHidden.subscribe(() => {
+              this.modalRef?.hide();
+              this.clearJsonConfigForm();
+              this.initFormElement(true)
+            });
+          },
+          error: (error) => {
+            console.error('Error saving JSON configuration:', error);
+            this.toastService.error('Erreur', "Une erreur est survenue lors de l'enregistrement de la configuration JSON.");
+            this.initFormElement();
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        this.toastService.error('Erreur', "Erreur lors de l'analyse du JSON.");
+        this.initFormElement();
+      }
+
+    } else {
+      this.jsonConfigForm.markAllAsTouched();
+    }
+  }
+
+  /**
+   * Clear JSON configuration form
+   */
+  clearJsonConfigForm(): void {
+    this.jsonConfigForm.reset();
+    this.jsonConfigForm.patchValue({
+      partnerId: null,
+      jsonConfig: ''
+    });
+  }
+
+  /**
    * Open modal
    * @param content modal content
    */
@@ -437,7 +584,7 @@ export class PartnerlistComponent {
       const description = this.formCredit.value.description;
       const partnerId = this.formCredit.value.partnerId;
 
-      let accountNumber = this.partenaires.filter(partner => partner.id == partnerId)[0].accountNumber ?? ''
+      let accountNumber = this.partenairesList.filter(partner => partner.id == partnerId)[0].accountNumber ?? ''
 
       this._accountService.recharger(accountNumber, { 'amount': amount, 'description': description }).subscribe({
         next: (response) => {

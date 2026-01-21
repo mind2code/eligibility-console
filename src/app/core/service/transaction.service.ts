@@ -14,20 +14,35 @@ export class TransactionService {
     getAll(paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
         return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS, paginationData: paginationData });
     }
+    getAllEchec(paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
+        return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS+'/echec', paginationData: paginationData });
+    }
 
     getByTransID(transID: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
         return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/bytransid/' + transID, paginationData: paginationData });
+    }
+    getEchecByTransID(transID: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
+        return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/echec/bytransid/' + transID, paginationData: paginationData });
     }
 
     getAllByMeternum(meterNum: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
         return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/bymeternum/' + meterNum, paginationData: paginationData });
     }
+    getAllEchecByMeternum(meterNum: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
+        return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/echec/bymeternum/' + meterNum, paginationData: paginationData });
+    }
 
     getAllByDate(date: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
         return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/bydate/' + date, paginationData: paginationData });
     }
+    getAllEchecByDate(date: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
+        return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/echec/bydate/' + date, paginationData: paginationData });
+    }
 
     getAllByPartner(apmlogin: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
         return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/bypartner/' + apmlogin, paginationData: paginationData });
+    }
+    getAllEchecByPartner(apmlogin: string, paginationData: any): Observable<ApiPaginatedResponse<Transaction>> {
+        return this._apiRequestService.getByPage({ endpoint: url_path.TRANSACTIONS + '/echec/bypartner/' + apmlogin, paginationData: paginationData });
     }
 }

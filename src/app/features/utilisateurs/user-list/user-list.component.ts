@@ -187,12 +187,23 @@ export class UserListComponent implements OnInit {
   delete(): void {
     if (this.utilisateur) {
       this.changeFormElement();
-      // Implement delete if API supports it
-      this.toastService.success('Succès', `L'utilisateur a été supprimé avec succès.`).onHidden.subscribe(() => {
-        this.initFormElement(true);
-        this.modalRef?.hide();
-        this.loadUtilisateurs();
+      
+      this._utilisateurAPI.delete(this.utilisateur.id || '').subscribe({
+        next: (response) => {
+          console.log(response);
+          
+          this.toastService.success('Succès', `L'utilisateur a été supprimé avec succès.`).onHidden.subscribe(() => {
+            this.initFormElement(true);
+            this.modalRef?.hide();
+            this.loadUtilisateurs();
+          });
+        },
+        error: (error) => {
+          console.error("There is an error !", error);
+          this.toastService.error('Suppression Echouée', `Une erreur est survenue lors de la suppression de l'utilisateur.`);
+        }
       });
+
     }
   }
 

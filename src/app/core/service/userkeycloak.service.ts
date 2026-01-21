@@ -34,4 +34,8 @@ export class UserKeycloakService {
     getUserById(userId: string) {
         return this._apiRequestService.getById(url_path.UTILISATEURS + '/getById/' + userId)
     }
+
+    delete(id: string) {
+    return this._apiRequestService.delete(url_path.UTILISATEURS + "/" + id)
+  }
 }

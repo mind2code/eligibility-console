@@ -1,11 +1,11 @@
-export interface Transaction {
+export interface TransactionEchec {
     transid?: string;
     partenaire?: string;
     system?: string;
     status?: string;
     amount?: number;
-    token?: string;
+    code?: string;
+    message?: string;
     transactionDate?: string;
-    meterNum?: string;
-    kwh?: string;
+    meterNum?: string
 }

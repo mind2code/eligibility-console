@@ -115,6 +115,7 @@
                       <th class="col">Téléphone</th>
                       <th class="col">N° de compte</th>
                       <th class="col">Solde actuel</th>
+                      <th class="col">Alerte Solde</th>
                       <th class="col">Status</th>
                       <th>Actions</th>
                     </tr>
@@ -131,6 +132,15 @@
                       <td class="fw-bold">
                         {{ partenaire.balance | number : "1.0-0" : "fr-FR" }}
                         FCFA
+                      </td>
+                      <td class="fw-bold">
+                        @if(partenaire.minimumBalance == null || partenaire.minimumBalance == undefined){
+                          <span class="badge badge-info d-inline-flex align-items-center badge-xs">Seuil non défini</span>
+                        } @else if (partenaire.balance <= partenaire.minimumBalance) {
+                          <span class="badge badge-danger d-inline-flex align-items-center badge-xs">Seuil atteint</span>
+                        } @else {
+                          <span class="badge badge-success d-inline-flex align-items-center badge-xs">Solde OK</span>
+                        }
                       </td>
                       <td>
                         <span
@@ -298,7 +308,7 @@
     <form [formGroup]="partnerForm" (submit)="savePartner()" class="px-3">
       <div class="modal-body">
         <div class="mb-3">
-          <label for="name" class="form-label">Nom</label>
+          <label for="name" class="form-label">Nom <span class="text-danger">*</span></label>
           <input
             class="form-control"
             type="text"
@@ -320,7 +330,7 @@
           }
         </div>
         <div class="mb-3">
-          <label for="code" class="form-label">Code</label>
+          <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
           <input
             class="form-control"
             type="text"
@@ -371,6 +381,33 @@
           @if (partnerForm.get('email')?.touched &&
           partnerForm.get('email')?.errors?.['email']) {
           <div class="invalid-feedback">Mauvais format d'email.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="minimumBalance" class="form-label">Solde minimum avant alerte</label>
+          <input
+            class="form-control"
+            type="text"
+             mask="separator.2"
+            id="minimumBalance"
+            formControlName="minimumBalance"
+            [ngClass]="{
+              'is-invalid':
+                partnerForm.get('minimumBalance')?.invalid &&
+                partnerForm.get('minimumBalance')?.touched,
+              'is-valid':
+                partnerForm.get('minimumBalance')?.valid &&
+                partnerForm.get('minimumBalance')?.touched
+            }"
+          />
+          @if (partnerForm.get('minimumBalance')?.touched &&
+          partnerForm.get('minimumBalance')?.errors?.['required']) {
+          <div class="invalid-feedback">Veuillez renseigner le solde minimum.</div>
+          }
+          @if (partnerForm.get('minimumBalance')?.touched &&
+          partnerForm.get('minimumBalance')?.errors?.['min']) {
+          <div class="invalid-feedback">Le solde minimum ne peut être inférieur à 0.</div>
           }
         </div>
 
@@ -430,92 +467,224 @@
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
-  <form [formGroup]="paramForm" (ngSubmit)="saveParams()" class="px-3">
-    <div class="modal-body">
-      <div class="mb-3">
-        <label class="form-label">Partenaire</label>
-        <select
-          formControlName="partnerId"
-          (change)="getPartnerParameters($event)"
-          class="form-select"
-          [ngClass]="{
-            'is-invalid':
-              paramForm.get('partnerId')?.invalid &&
-              paramForm.get('partnerId')?.touched
-          }"
-        >
-          <option [ngValue]="null">Sélectionner un partenaire</option>
-          @for (partner of partenaires; track $index) {
-          <option [ngValue]="partner.id">{{ partner.name }}</option>
-          }
-        </select>
-        @if (paramForm.get('partnerId')?.invalid &&
-        paramForm.get('partnerId')?.touched) {
-        <div class="invalid-feedback">Le partenaire est requis.</div>
-        }
-      </div>
 
-      <div formArrayName="params">
-        <div
-          *ngFor="let p of params.controls; let i = index"
-          [formGroupName]="i"
-          class="mb-3 d-flex gap-2 align-items-start"
-        >
-          <input
-            formControlName="name"
-            class="form-control"
-            placeholder="Nom paramètre"
-          />
-          <input
-            formControlName="value"
-            class="form-control"
-            placeholder="Valeur"
-          />
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-3 px-3 mt-3" role="tablist">
+    <li class="nav-item">
+      <a
+        class="nav-link active"
+        id="tab-standard-params"
+        data-bs-toggle="tab"
+        href="#standard-params"
+        role="tab"
+        aria-controls="standard-params"
+        aria-selected="true"
+      >
+        <i class="ti ti-list me-2"></i>Paramètres Standard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        id="tab-json-config"
+        data-bs-toggle="tab"
+        href="#json-config"
+        role="tab"
+        aria-controls="json-config"
+        aria-selected="false"
+      >
+        <i class="ti ti-json me-2"></i>Configuration JSON
+      </a>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Standard Parameters Tab -->
+    <div
+      id="standard-params"
+      class="tab-pane fade show active"
+      role="tabpanel"
+      aria-labelledby="tab-standard-params"
+    >
+      <form [formGroup]="paramForm" (ngSubmit)="saveParams()" class="px-3">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Partenaire <span class="text-danger">*</span></label>
+            <select
+              formControlName="partnerId"
+              (change)="getPartnerParameters($event)"
+              class="form-select"
+              [ngClass]="{
+                'is-invalid':
+                  paramForm.get('partnerId')?.invalid &&
+                  paramForm.get('partnerId')?.touched
+              }"
+            >
+              <option [ngValue]="null">Sélectionner un partenaire</option>
+              @for (partner of partenaires; track $index) {
+              <option [ngValue]="partner.id">{{ partner.name }}</option>
+              }
+            </select>
+            @if (paramForm.get('partnerId')?.invalid &&
+            paramForm.get('partnerId')?.touched) {
+            <div class="invalid-feedback">Le partenaire est requis.</div>
+            }
+          </div>
+
+          <div formArrayName="params">
+            <div
+              *ngFor="let p of params.controls; let i = index"
+              [formGroupName]="i"
+              class="mb-3 d-flex gap-2 align-items-start"
+            >
+              <input
+                formControlName="name"
+                class="form-control"
+                placeholder="Nom paramètre"
+              />
+              <input
+                formControlName="value"
+                class="form-control"
+                placeholder="Valeur"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                (click)="removeParam(i)"
+                [disabled]="params.length <= 1"
+              >
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="addParam()"
+            >
+              <i class="ti ti-plus me-1"></i>Ajouter un champ
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
           <button
             type="button"
-            class="btn btn-outline-danger"
-            (click)="removeParam(i)"
-            [disabled]="params.length <= 1"
+            class="btn btn-cancel me-2"
+            (click)="modalRef?.hide()"
           >
-            <i class="ti ti-trash"></i>
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="paramForm.invalid"
+          >
+            <i
+              class="fa"
+              [ngClass]="{
+                'fa-spin fa-spinner': loadingBtn,
+                'fa-check': !loadingBtn
+              }"
+            ></i>
+            {{ textButton }}
           </button>
         </div>
-      </div>
+      </form>
+    </div>
 
-      <div class="mb-3">
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          (click)="addParam()"
-        >
-          <i class="ti ti-plus me-1"></i>Ajouter un champ
-        </button>
-      </div>
+    <!-- JSON Configuration Tab -->
+    <div
+      id="json-config"
+      class="tab-pane fade"
+      role="tabpanel"
+      aria-labelledby="tab-json-config"
+    >
+      <form [formGroup]="jsonConfigForm" (ngSubmit)="saveJsonConfig()" class="px-3">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Partenaire <span class="text-danger">*</span></label>
+            <select
+              formControlName="partnerId"
+              (change)="getPartnerParametersForJson($event)"
+              class="form-select"
+              [ngClass]="{
+                'is-invalid':
+                  jsonConfigForm.get('partnerId')?.invalid &&
+                  jsonConfigForm.get('partnerId')?.touched
+              }"
+            >
+              <option [ngValue]="null">Sélectionner un partenaire</option>
+              @for (partner of partenaires; track $index) {
+              <option [ngValue]="partner.id">{{ partner.name }}</option>
+              }
+            </select>
+            @if (jsonConfigForm.get('partnerId')?.invalid &&
+            jsonConfigForm.get('partnerId')?.touched) {
+            <div class="invalid-feedback">Le partenaire est requis.</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Configuration JSON <span class="text-danger">*</span></label>
+            <textarea
+              formControlName="jsonConfig"
+              class="form-control"
+              rows="12"
+              placeholder='{"login": "value", "user": "value", ...}'
+              [ngClass]="{
+                'is-invalid':
+                  jsonConfigForm.get('jsonConfig')?.invalid &&
+                  jsonConfigForm.get('jsonConfig')?.touched,
+                'is-valid':
+                  jsonConfigForm.get('jsonConfig')?.valid &&
+                  jsonConfigForm.get('jsonConfig')?.touched &&
+                  !jsonConfigForm.get('jsonConfig')?.hasError('required')
+              }"
+            ></textarea>
+            @if (jsonConfigForm.get('jsonConfig')?.touched) {
+              @if (jsonConfigForm.get('jsonConfig')?.hasError('required')) {
+              <div class="invalid-feedback d-block">La configuration JSON est requise.</div>
+              }
+              @if (jsonConfigForm.get('jsonConfig')?.hasError('invalidJson')) {
+              <div class="invalid-feedback d-block">Le JSON n'est pas valide. Veuillez vérifier la syntaxe.</div>
+              }
+            }
+            <small class="form-text text-muted d-block mt-2">
+              Veuillez entrer une configuration JSON valide. Exemple:
+              <br />
+              {{'{ "login": "144QbkRBrkL33qRZdUVShW9wQsYa", "user": "jamie", "userid": "H99150101", ... }'}}
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-cancel me-2"
+            (click)="modalRef?.hide()"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="jsonConfigForm.invalid"
+          >
+            <i
+              class="fa"
+              [ngClass]="{
+                'fa-spin fa-spinner': loadingBtn,
+                'fa-check': !loadingBtn
+              }"
+            ></i>
+            {{ textButton }}
+          </button>
+        </div>
+      </form>
     </div>
-    <div class="modal-footer">
-      <button
-        type="button"
-        class="btn btn-cancel me-2"
-        (click)="modalRef?.hide()"
-      >
-        Annuler
-      </button>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="paramForm.invalid"
-      >
-        <i
-          class="fa"
-          [ngClass]="{
-            'fa-spin fa-spinner': loadingBtn,
-            'fa-check': !loadingBtn
-          }"
-        ></i>
-        {{ textButton }}
-      </button>
-    </div>
-  </form>
+  </div>
 </ng-template>
 <!-- End Modal for adding parameters -->
 
@@ -590,7 +759,7 @@
             }"
           >
             <option [ngValue]="null">Sélectionner un partenaire</option>
-            @for (partner of partenaires; track $index) {
+            @for (partner of partenairesList; track $index) {
             <option [ngValue]="partner.id">{{ partner.name }}</option>
             }
           </select>
@@ -682,4 +851,3 @@
     </form>
   </div>
 </ng-template>
-

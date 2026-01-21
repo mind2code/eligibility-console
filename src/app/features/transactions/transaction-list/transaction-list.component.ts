@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Transaction } from '../../../core/model/transaction.model';
+import { TransactionEchec } from '../../../core/model/transaction-echec.model';
 import { TransactionService } from '../../../core/service/transaction.service';
 import { PartnerService } from '../../../core/service/partner.service';
 import { ToastService } from '../../../core/service/globals/toast.service';
@@ -26,11 +27,20 @@ export class TransactionListComponent implements OnInit {
     breadCrumbItems: breadCrumbItems[] = [];
     pageTitle = 'Transactions';
 
-    transactions: Transaction[] = []
-    transactionsCopy: Transaction[] = []
-    partners: Partner[] = [];
+    // Onglet actif (0 = réussies, 1 = échouées)
+    activeTab = 0;
 
-    apiResponse!: ApiPaginatedResponse<Transaction>
+    // Transactions réussies
+    successTransactions: Transaction[] = []
+    successTransactionsCopy: Transaction[] = []
+    successApiResponse!: ApiPaginatedResponse<Transaction>
+
+    // Transactions échouées (modèle spécifique)
+    failedTransactions: TransactionEchec[] = []
+    failedTransactionsCopy: TransactionEchec[] = []
+    failedApiResponse!: ApiPaginatedResponse<TransactionEchec>
+
+    partners: Partner[] = [];
 
     // pagination variables
     page = 0;
@@ -57,7 +67,17 @@ export class TransactionListComponent implements OnInit {
             { label: 'Liste transactions', active: true }
         ];
 
-        this.apiResponse = {
+        this.successApiResponse = {
+            total_pages: 0,
+            message: '',
+            total_items: 0,
+            current_page: 0,
+            status: false,
+            page_size: 0,
+            data: []
+        }
+
+        this.failedApiResponse = {
             total_pages: 0,
             message: '',
             total_items: 0,
@@ -94,6 +114,26 @@ export class TransactionListComponent implements OnInit {
         });
     }
 
+    separateTransactions(response: ApiPaginatedResponse<any>): void {
+        if (this.activeTab === 0) {
+            // Succès
+            this.successTransactions = response.data;
+            this.successTransactionsCopy = [...this.successTransactions];
+            this.successApiResponse = { ...response, data: this.successTransactions };
+        } else {
+
+            // Échouées -> mapper vers TransactionEchec
+            this.failedTransactions = response.data;
+            this.failedTransactionsCopy = [...this.failedTransactions];
+            this.failedApiResponse = { ...response, data: this.failedTransactions };
+        }
+    }
+
+    selectTab(tabIndex: number): void {
+        this.activeTab = tabIndex;
+        this.searchDataValue = '';
+    }
+
     search(): void {
         if (this.searchForm.valid) {
             const searchType = this.searchForm.value.searchType;
@@ -126,11 +166,10 @@ export class TransactionListComponent implements OnInit {
     }
 
     searchByTransID(transID: string): void {
-        this._transactionAPI.getByTransID(transID, { page: this.page, size: this.size }).subscribe({
+        let apiSend = this.activeTab === 0 ? this._transactionAPI.getByTransID(transID, { page: this.page, size: this.size }) : this._transactionAPI.getEchecByTransID(transID, { page: this.page, size: this.size });
+        apiSend.subscribe({
             next: (response) => {
-                this.apiResponse = response;
-                this.transactions = response.data;
-                this.transactionsCopy = response.data;
+                this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
@@ -138,18 +177,18 @@ export class TransactionListComponent implements OnInit {
                 console.error("Error fetching transaction:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche de la transaction.');
                 this.hasSearched = false;
-                this.transactions = [];
+                this.successTransactions = [];
+                this.failedTransactions = [];
                 this.loadingBtn = false;
             }
         })
     }
 
     searchByMeternum(meterNum: string): void {
-        this._transactionAPI.getAllByMeternum(meterNum, { page: this.page, size: this.size }).subscribe({
+        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByMeternum(meterNum, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByMeternum(meterNum, { page: this.page, size: this.size });
+        apiSend.subscribe({
             next: (response) => {
-                this.apiResponse = response;
-                this.transactions = response.data;
-                this.transactionsCopy = response.data;
+                this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
@@ -157,18 +196,18 @@ export class TransactionListComponent implements OnInit {
                 console.error("Error fetching transactions by meternum:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
-                this.transactions = [];
+                this.successTransactions = [];
+                this.failedTransactions = [];
                 this.loadingBtn = false;
             }
         })
     }
 
     searchByDate(date: string): void {
-        this._transactionAPI.getAllByDate(date, { page: this.page, size: this.size }).subscribe({
+        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByDate(date, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByDate(date, { page: this.page, size: this.size });
+        apiSend.subscribe({
             next: (response) => {
-                this.apiResponse = response;
-                this.transactions = response.data;
-                this.transactionsCopy = response.data;
+                this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
@@ -176,18 +215,18 @@ export class TransactionListComponent implements OnInit {
                 console.error("Error fetching transactions by date:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
-                this.transactions = [];
+                this.successTransactions = [];
+                this.failedTransactions = [];
                 this.loadingBtn = false;
             }
         })
     }
 
     searchByPartner(apmlogin: string): void {
-        this._transactionAPI.getAllByPartner(apmlogin, { page: this.page, size: this.size }).subscribe({
+        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByPartner(apmlogin, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByPartner(apmlogin, { page: this.page, size: this.size });
+        apiSend.subscribe({
             next: (response) => {
-                this.apiResponse = response;
-                this.transactions = response.data;
-                this.transactionsCopy = response.data;
+                this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
@@ -195,36 +234,63 @@ export class TransactionListComponent implements OnInit {
                 console.error("Error fetching transactions by partner:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
-                this.transactions = [];
+                this.successTransactions = [];
+                this.failedTransactions = [];
                 this.loadingBtn = false;
             }
         })
     }
 
     public searchData(value: string): void {
-        if (value === '') {
-            this.transactions = this.transactionsCopy;
+        if (this.activeTab === 0) {
+            // Tab des transactions réussies
+            if (value === '') {
+                this.successTransactions = this.successTransactionsCopy;
+            } else {
+                this.successTransactions = this.successTransactionsCopy.filter(trans =>
+                    trans.transid?.toLowerCase().includes(value.toLowerCase()) ||
+                    trans.partenaire?.toLowerCase().includes(value.toLowerCase()) ||
+                    trans.system?.toLowerCase().includes(value.toLowerCase()) ||
+                    trans.token?.toLowerCase().includes(value.toLowerCase())
+                );
+            }
         } else {
-            this.transactions = this.transactionsCopy.filter(trans =>
-                trans.transid?.toLowerCase().includes(value.toLowerCase()) ||
-                trans.partenaire?.toLowerCase().includes(value.toLowerCase()) ||
-                trans.system?.toLowerCase().includes(value.toLowerCase()) ||
-                trans.token?.toLowerCase().includes(value.toLowerCase())
-            );
+            // Tab des transactions échouées
+            if (value === '') {
+                this.failedTransactions = this.failedTransactionsCopy;
+            } else {
+                this.failedTransactions = this.failedTransactionsCopy.filter(trans =>
+                    trans.transid?.toLowerCase().includes(value.toLowerCase()) ||
+                    trans.partenaire?.toLowerCase().includes(value.toLowerCase()) ||
+                    trans.system?.toLowerCase().includes(value.toLowerCase())
+                );
+            }
         }
     }
 
     public sortData(sort: Sort) {
-        const data = this.transactions.slice();
-
-        if (!sort.active || sort.direction === '') {
-            this.transactions = data;
+        if (this.activeTab === 0) {
+            const data = this.successTransactions.slice();
+            if (!sort.active || sort.direction === '') {
+                this.successTransactions = data;
+            } else {
+                this.successTransactions = data.sort((a, b) => {
+                    const aValue = (a as never)[sort.active];
+                    const bValue = (b as never)[sort.active];
+                    return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
+                });
+            }
         } else {
-            this.transactions = data.sort((a, b) => {
-                const aValue = (a as never)[sort.active];
-                const bValue = (b as never)[sort.active];
-                return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
-            });
+            const data = this.failedTransactions.slice();
+            if (!sort.active || sort.direction === '') {
+                this.failedTransactions = data;
+            } else {
+                this.failedTransactions = data.sort((a, b) => {
+                    const aValue = (a as never)[sort.active];
+                    const bValue = (b as never)[sort.active];
+                    return (aValue < bValue ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
+                });
+            }
         }
     }
 
@@ -234,7 +300,8 @@ export class TransactionListComponent implements OnInit {
             if (this.page < 0) this.page = 0
         } else if (newPage === 'next') {
             this.page++;
-            if (this.page === this.apiResponse.total_pages) this.page = this.apiResponse.current_page
+            const apiResponse = this.activeTab === 0 ? this.successApiResponse : this.failedApiResponse;
+            if (this.page === apiResponse.total_pages) this.page = apiResponse.current_page
         } else if (typeof newPage === 'number') {
             this.size = newPage;
             this.page = 0;
@@ -270,7 +337,7 @@ export class TransactionListComponent implements OnInit {
     getStatusClass(status: string | undefined): string {
         if (!status) return 'badge-secondary';
         if (status === '0') return 'badge-success';
-        if (status === '1') return 'badge-danger';
+        // if (status !== '0') return 'badge-danger';
         return 'badge-secondary';
     }
 }

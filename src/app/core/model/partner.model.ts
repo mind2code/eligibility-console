@@ -9,4 +9,5 @@ export interface Partner {
   balance: number;
   active: boolean;
   dateCreation: Date;
+  minimumBalance: number;
 }

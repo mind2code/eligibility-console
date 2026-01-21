@@ -16,14 +16,14 @@ export const routes: Routes = [
         children: [
           { path: 'index', loadComponent: () => import('./features/dashboard/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent) },
         ],
-        canActivate: [canActivateAuthRole],
-        data: { role: 'admin' }
       },
       {
         path: 'partenaires', loadComponent: () => import('./features/partenaires/partenaires.component').then(m => m.PartenairesComponent),
         children: [
           { path: 'liste-partenaires', loadComponent: () => import('./features/partenaires/partnerlist/partnerlist.component').then(m => m.PartnerlistComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'vendeurs', loadComponent: () => import('./features/vendeurs/vendeurs.component').then(m => m.VendeursComponent),
@@ -31,7 +31,9 @@ export const routes: Routes = [
           { path: 'liste-vendeurs', loadComponent: () => import('./features/vendeurs/vendor-list/vendor-list.component').then(m => m.VendorListComponent) },
           { path: 'form', loadComponent: () => import('./features/vendeurs/vendor-form/vendor-form.component').then(m => m.VendorFormComponent) },
           { path: 'form/:id', loadComponent: () => import('./features/vendeurs/vendor-form/vendor-form.component').then(m => m.VendorFormComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'compteurs', loadComponent: () => import('./features/compteurs/compteurs.component').then(m => m.CompteursComponent),
@@ -39,19 +41,25 @@ export const routes: Routes = [
           { path: 'liste-compteurs', loadComponent: () => import('./features/compteurs/compteur-list/compteur-list.component').then(m => m.CompteurListComponent) },
           { path: 'form', loadComponent: () => import('./features/compteurs/compteur-form/compteur-form.component').then(m => m.CompteurFormComponent) },
           { path: 'form/:id', loadComponent: () => import('./features/compteurs/compteur-form/compteur-form.component').then(m => m.CompteurFormComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'comptes', loadComponent: () => import('./features/comptes/comptes.component').then(m => m.ComptesComponent),
         children: [
           { path: 'liste-comptes', loadComponent: () => import('./features/comptes/comptelist/comptelist.component').then(m => m.CompletListComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'dictionnaires', loadComponent: () => import('./features/dictionnaires/dictionnaires.component').then(m => m.DictionnairesComponent),
         children: [
           { path: 'liste-dictionnaires', loadComponent: () => import('./features/dictionnaires/dictionnaire-list/dictionnaire-list.component').then(m => m.DictionnaireListComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'utilisateurs', loadComponent: () => import('./features/utilisateurs/utilisateurs.component').then(m => m.UtilisateursComponent),
@@ -59,13 +67,17 @@ export const routes: Routes = [
           { path: 'liste-utilisateurs', loadComponent: () => import('./features/utilisateurs/user-list/user-list.component').then(m => m.UserListComponent) },
           { path: 'form', loadComponent: () => import('./features/utilisateurs/user-form/user-form.component').then(m => m.UserFormComponent) },
           { path: 'form/:id', loadComponent: () => import('./features/utilisateurs/user-form/user-form.component').then(m => m.UserFormComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       },
       {
         path: 'transactions', loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent),
         children: [
           { path: 'liste-transactions', loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent) },
-        ]
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       }
 
     ]

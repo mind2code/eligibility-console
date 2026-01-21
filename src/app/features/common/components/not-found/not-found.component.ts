@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
   styleUrl: './not-found.component.scss',
   imports: [CommonModule]
 })
-export class NotFoundComponent {
+export class NotFoundComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
-    private renderer:Renderer2
-  ){}
-  navigation(){
+    private renderer: Renderer2
+  ) { }
+  navigation() {
     this.router.navigate(['/dashboard'])
   }
   ngOnInit(): void {

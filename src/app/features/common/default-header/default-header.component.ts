@@ -90,8 +90,8 @@ export class DefaultHeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.keycloak.loadUserProfile().then(profile => {
-      this.userDetails = profile.firstName + ' ' + profile.lastName
-      this.userEmail = profile.email
+      this.userDetails = (profile.firstName + ' ' + profile.lastName) || 'Utilisateur';
+      this.userEmail = profile.email || 'email@email.com';
     })
   }
 

@@ -19,6 +19,40 @@
         <h5>Consulter les Transactions</h5>
       </div>
       <div class="card-body">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [ngClass]="{ active: activeTab === 0 }"
+              (click)="selectTab(0)"
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeTab === 0"
+            >
+              <i class="ti ti-check me-2"></i> Transactions Réussies
+              @if (successTransactions.length > 0) {
+                <span class="badge badge-success ms-2">{{ successApiResponse.total_items }}</span>
+              }
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [ngClass]="{ active: activeTab === 1 }"
+              (click)="selectTab(1)"
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeTab === 1"
+            >
+              <i class="ti ti-x me-2"></i> Transactions Échouées
+              @if (failedTransactions.length > 0) {
+                <span class="badge badge-danger ms-2">{{ failedApiResponse.total_items }}</span>
+              }
+            </button>
+          </li>
+        </ul>
+
         <!-- Search Form -->
         <div class="card mb-3">
           <div class="card-header">
@@ -175,40 +209,77 @@
                     <tr>
                       <th class="col">#</th>
                       <th class="col">ID Transaction</th>
+                      <th class="col">N° Compteur</th>
                       <th class="col">Partenaire</th>
                       <th class="col">Système</th>
                       <th class="col">Montant</th>
-                      <th class="col">Token</th>
+                      @if (activeTab === 0) {
+                        <th class="col">Token</th>
+                        <th class="col">KWH</th>
+                      } @else {
+                        <th class="col">Cause</th>
+                      }
                       <th class="col">Date</th>
                       <th class="col">Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @for (transaction of transactions; track $index) {
-                    <tr>
-                      <th scope="row">{{ $index + 1 }}</th>
-                      <td class="fw-bold">{{ transaction.transid }}</td>
-                      <td>{{ transaction.partenaire }}</td>
-                      <td>{{ transaction.system }}</td>
-                      <td class="fw-bold">{{ transaction.amount }} FCFA</td>
-                      <td><span class="badge badge-sm badge-info">{{ transaction.token }}</span></td>
-                      <td>{{ transaction.transactionDate }}</td>
-                      <td>
-                        <span
-                          class="badge d-inline-flex align-items-center badge-xs"
-                          [ngClass]="getStatusClass(transaction.status)"
-                        >
-                          <i class="ti ti-point-filled me-1"></i>
-                          {{ getStatusLabel(transaction.status) }}
-                        </span>
-                      </td>
-                    </tr>
-                    } @if (transactions.length === 0) {
-                    <tr>
-                      <td colspan="8">
-                        <h5 class="no-record">Aucune transaction trouvée</h5>
-                      </td>
-                    </tr>
+                    @if (activeTab === 0) {
+                      @for (transaction of successTransactions; track $index) {
+                      <tr>
+                        <th scope="row">{{ $index + 1 }}</th>
+                        <td class="fw-bold">{{ transaction.transid }}</td>
+                        <td class="fw-bold">{{ transaction.meterNum }}</td>
+                        <td>{{ transaction.partenaire }}</td>
+                        <td>{{ transaction.system }}</td>
+                        <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                        <td><span class="badge badge-sm badge-info">{{ transaction.token }}</span></td>
+                        <td class="fw-bold">{{ transaction.kwh }}</td>
+                        <td>{{ transaction.transactionDate }}</td>
+                        <td>
+                          <span
+                            class="badge badge-success d-inline-flex align-items-center badge-xs"
+                          >
+                            <i class="ti ti-point-filled me-1"></i>
+                            {{ transaction.status }}
+                          </span>
+                        </td>
+                      </tr>
+                      } @if (successTransactions.length === 0) {
+                      <tr>
+                        <td colspan="8">
+                          <h5 class="no-record">Aucune transaction réussie trouvée</h5>
+                        </td>
+                      </tr>
+                      }
+                    } @else {
+                      @for (transaction of failedTransactions; track $index) {
+                      <tr>
+                        <th scope="row">{{ $index + 1 }}</th>
+                        <td class="fw-bold">{{ transaction.transid }}</td>
+                        <td class="fw-bold">{{ transaction.meterNum }}</td>
+                        <td>{{ transaction.partenaire }}</td>
+                        <td>{{ transaction.system }}</td>
+                        <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                        <td class="fw-bold"><span class="text-danger">{{ 'Code: ' + transaction.code + ' - ' + transaction.message || 'N/A' }}</span></td>
+                        <td>{{ transaction.transactionDate }}</td>
+                        <td>
+                          <span
+                            class="badge d-inline-flex align-items-center badge-xs"
+                            [ngClass]="getStatusClass(transaction.status)"
+                          >
+                            <i class="ti ti-point-filled me-1"></i>
+                            {{ getStatusLabel(transaction.status) }}
+                          </span>
+                        </td>
+                      </tr>
+                      } @if (failedTransactions.length === 0) {
+                      <tr>
+                        <td colspan="8">
+                          <h5 class="no-record">Aucune transaction échouée trouvée</h5>
+                        </td>
+                      </tr>
+                      }
                     }
                   </tbody>
                 </table>
@@ -217,21 +288,40 @@
             <div class="row">
               <div class="col-sm-12 col-md-5">
                 <div class="dataTables_info">
-                  @if(apiResponse.current_page!=undefined){ Affichage de
-                  <b>{{
-                    apiResponse.current_page * apiResponse.page_size + 1
-                  }}</b>
-                  à
-                  <b>
-                    @if (apiResponse.current_page+1==apiResponse.total_pages) {
-                    {{ apiResponse.total_items }}
-                    } @else {
-                    {{ (apiResponse.current_page + 1) * apiResponse.page_size }}
+                  @if(activeTab === 0) {
+                    @if(successApiResponse.current_page!=undefined){ Affichage de
+                    <b>{{
+                      successApiResponse.current_page * successApiResponse.page_size + 1
+                    }}</b>
+                    à
+                    <b>
+                      @if (successApiResponse.current_page+1==successApiResponse.total_pages) {
+                      {{ successApiResponse.total_items }}
+                      } @else {
+                      {{ (successApiResponse.current_page + 1) * successApiResponse.page_size }}
+                      }
+                    </b>
+                    sur
+                    <b>{{ successApiResponse.total_items }}</b>
+                    }@else { Affichage de 0 à {{ size }} sur {{ page }}
                     }
-                  </b>
-                  sur
-                  <b>{{ apiResponse.total_items }}</b>
-                  }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                  } @else {
+                    @if(failedApiResponse.current_page!=undefined){ Affichage de
+                    <b>{{
+                      failedApiResponse.current_page * failedApiResponse.page_size + 1
+                    }}</b>
+                    à
+                    <b>
+                      @if (failedApiResponse.current_page+1==failedApiResponse.total_pages) {
+                      {{ failedApiResponse.total_items }}
+                      } @else {
+                      {{ (failedApiResponse.current_page + 1) * failedApiResponse.page_size }}
+                      }
+                    </b>
+                    sur
+                    <b>{{ failedApiResponse.total_items }}</b>
+                    }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                    }
                   }
                 </div>
               </div>
@@ -242,14 +332,14 @@
                       <li
                         class="page-item"
                         [ngClass]="{
-                          disabled: apiResponse!.current_page === 0
+                          disabled: (activeTab === 0 ? successApiResponse : failedApiResponse)!.current_page === 0
                         }"
                       >
                         <a
                           class="page-link"
                           href="javascript:void(0);"
                           [ngClass]="{
-                            'text-primary': apiResponse!.current_page !== 0
+                            'text-primary': (activeTab === 0 ? successApiResponse : failedApiResponse)!.current_page !== 0
                           }"
                           (click)="changePage('prev')"
                         >
@@ -260,12 +350,12 @@
                         class="bg-primary text-white page-item d-flex align-items-center justify-content-center me-2 ms-2 ps-2 pe-2"
                       >
                         <span
-                          >Page @if(apiResponse.current_page!=undefined){
+                          >Page @if((activeTab === 0 ? successApiResponse : failedApiResponse).current_page!=undefined){
                           {{
-                            apiResponse.current_page +
+                            (activeTab === 0 ? successApiResponse : failedApiResponse).current_page +
                               1 +
                               " / " +
-                              apiResponse.total_pages
+                              (activeTab === 0 ? successApiResponse : failedApiResponse).total_pages
                           }}
                           }@else {
                           {{ page }} / {{ page }} }</span
@@ -276,16 +366,16 @@
                         class="page-item"
                         [ngClass]="{
                           disabled:
-                            apiResponse!.current_page + 1 ===
-                            apiResponse!.total_pages
+                            (activeTab === 0 ? successApiResponse : failedApiResponse)!.current_page + 1 ===
+                            (activeTab === 0 ? successApiResponse : failedApiResponse)!.total_pages
                         }"
                       >
                         <a
                           class="page-link"
                           [ngClass]="{
                             'text-primary':
-                              apiResponse!.current_page + 1 !==
-                              apiResponse!.total_pages
+                              (activeTab === 0 ? successApiResponse : failedApiResponse)!.current_page + 1 !==
+                              (activeTab === 0 ? successApiResponse : failedApiResponse)!.total_pages
                           }"
                           href="javascript:void(0);"
                           (click)="changePage('next')"
