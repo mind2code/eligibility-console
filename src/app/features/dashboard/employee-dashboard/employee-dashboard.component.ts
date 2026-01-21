@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxEditorModule } from 'ngx-editor';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FooterComponent } from '../../common/footer/footer.component';
-import { RouterLink } from '@angular/router';
+// import { RouterLink } from '@angular/router';
 import { CollapseHeaderComponent } from '../../common/collapse-header/collapse-header.component';
 import { BreadcrumbsComponent } from '../../common/breadcrumbs/breadcrumbs.component';
 
@@ -43,7 +43,7 @@ export interface ChartOptions {
       NgxEditorModule,
       BsDatepickerModule,
       FooterComponent,
-      RouterLink,
+      // RouterLink,
       NgApexchartsModule,
       CollapseHeaderComponent,
       BreadcrumbsComponent
@@ -87,7 +87,7 @@ export class EmployeeDashboardComponent implements AfterViewInit ,OnInit{
      */
     this.breadCrumbItems = [
         { label: 'Dashboards' },
-        { label: 'Employee Dashboard', active: true }
+        { label: 'Admin Dashboard', active: true }
     ];
     this.leaves_chart = {
       chart: {
@@ -127,7 +127,7 @@ export class EmployeeDashboardComponent implements AfterViewInit ,OnInit{
     this.performance_chart2 = {
       series: [{
         name: "performance",
-        data: [20, 20, 35, 35, 40, 60, 60]
+        data: [20, 20, 35, 35, 40, 60, 60, 50, 40, 30, 20, 20]
     }],
       chart: {
       height: 273,
@@ -154,7 +154,7 @@ export class EmployeeDashboardComponent implements AfterViewInit ,OnInit{
     //   },
     // },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+      categories: ['00h', '02h', '04h', '06h', '08h', '10h', '12h', '14h', '16h','18h', '20h', '22h'],
     },
     yaxis: {
       min: 10,

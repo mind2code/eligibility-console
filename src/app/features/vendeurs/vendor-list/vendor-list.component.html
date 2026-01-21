@@ -48,7 +48,7 @@
       <div
         class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
       >
-        <h5>Liste des Vendeurs</h5>
+        <h5>Liste des Vendeurs <span class="badge bg-primary rounded-pill">{{apiResponse.total_items}}</span></h5>
         <div
           class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
         ></div>
@@ -116,7 +116,7 @@
                       <td>{{ vendeur.email }}</td>
                       <td>{{ vendeur.telephone }}</td>
                       <td class="fw-bold">{{ vendeur.username }}</td>
-                      <td class="fw-bold text-secondary">
+                      <td class="fw-bold text-primary">
                         {{ vendeur.partner }}
                       </td>
                       <td>
