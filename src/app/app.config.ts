@@ -14,8 +14,17 @@ import localeFR from '@angular/common/locales/fr';
 import { provideToastr } from 'ngx-toastr';
 import { provideSweetAlert2 } from "@sweetalert2/ngx-sweetalert2";
 
+// const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
+//   urlPattern: /^(http:\/\/localhost:8700)(\/.*)?$/i,
+//   bearerPrefix: 'Bearer'
+// });
+const apiUrlRegex = new RegExp(
+  '^' + environment.apiUrlSrc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+  'i'
+);
+
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^(http:\/\/localhost:8700)(\/.*)?$/i,
+  urlPattern: apiUrlRegex,
   bearerPrefix: 'Bearer'
 });
 

@@ -281,7 +281,7 @@ export class SettingService {
     );
   }
   public changeLoaderState(isLoader: string): void {
-    this.isLoader.next(isLoader);
+    /*this.isLoader.next(isLoader);
     localStorage.setItem('isLoader', isLoader);
     this.renderer.setAttribute(
       document.documentElement,
@@ -289,6 +289,12 @@ export class SettingService {
       isLoader === '1'
         ? 'enable'
         : 'disable'
+    );*/
+    this.isLoader.next(isLoader);
+    localStorage.setItem('isLoader', '2');
+    this.renderer.setAttribute(
+      document.documentElement,
+      'data-loader','disable'
     );
   }
   public changeSidebarImage(img: string): void {
