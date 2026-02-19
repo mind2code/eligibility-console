@@ -1,10 +1,12 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://api-eligibiliy.univers.ci/api',
-    appUrl:'http://localhost:4200',
+    apiUrl: 'https://eligibility-admin.univers.ci/api/v1',
+    apiUrlSrc: 'https://eligibility-admin.univers.ci/api',
+    appUrl:'https://eligibility-admin.univers.ci',
     keycloak: {
-        host: 'https://iamssov2r.univers.ci/',
+        host: 'https://iamssov2.univers.ci/',
         realm: 'eligibility',
-        clientId: 'apm-eligibility'
-    }
+        clientId: 'admin-portal'
+    },
+    pageLimit: 10 
 }

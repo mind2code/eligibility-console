@@ -1,1 +1,0 @@
-import{_c as a,ab as e,da as t}from"./chunk-BGNXY3HA.js";var R=(()=>{class i{static \u0275fac=function(p){return new(p||i)};static \u0275mod=e({type:i});static \u0275inj=t({imports:[a]})}return i})();export{R as a};

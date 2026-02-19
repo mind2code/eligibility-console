@@ -1,1 +1,0 @@
-import{d as r,h as a}from"./chunk-6IX4W6PA.js";import{$a as n,vb as o}from"./chunk-BGNXY3HA.js";import"./chunk-EQDQRRRY.js";var i=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-partenaires"]],decls:1,vars:0,template:function(e,p){e&1&&o(0,"router-outlet")},dependencies:[a,r],encapsulation:2})};export{i as PartenairesComponent};

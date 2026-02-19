@@ -522,7 +522,7 @@
               }"
             >
               <option [ngValue]="null">Sélectionner un partenaire</option>
-              @for (partner of partenaires; track $index) {
+              @for (partner of partenairesList; track $index) {
               <option [ngValue]="partner.id">{{ partner.name }}</option>
               }
             </select>
@@ -617,7 +617,7 @@
               }"
             >
               <option [ngValue]="null">Sélectionner un partenaire</option>
-              @for (partner of partenaires; track $index) {
+              @for (partner of partenairesList; track $index) {
               <option [ngValue]="partner.id">{{ partner.name }}</option>
               }
             </select>

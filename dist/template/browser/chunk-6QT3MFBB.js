@@ -1,1 +1,0 @@
-import{d as p,h as r}from"./chunk-6IX4W6PA.js";import{$a as o,vb as n}from"./chunk-BGNXY3HA.js";import"./chunk-EQDQRRRY.js";var m=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-compteurs"]],decls:1,vars:0,template:function(e,i){e&1&&n(0,"router-outlet")},dependencies:[r,p],encapsulation:2})};export{m as CompteursComponent};
