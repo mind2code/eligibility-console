@@ -41,8 +41,8 @@ export class VendorService {
     return this._apiRequestService.delete(url_path.VENDEURS + "/" + id)
   }
 
-  reinitPassword(userId: string, password: string) {
-    return this._apiRequestService.getById(url_path.VENDEURS + '/' + userId + '/' + password)
+  reinitPassword(data:any) {
+    return this._apiRequestService.put({ endpoint: url_path.VENDEURS + '/reset-password', data: JSON.stringify(data) })
   }
 }
 

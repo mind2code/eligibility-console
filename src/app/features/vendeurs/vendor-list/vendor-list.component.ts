@@ -237,7 +237,7 @@ export class VendorListComponent {
     //Changement de l'apparence du bouton
     this.changeFormElement();
 
-    this._vendeurAPI.reinitPassword(this.vendeur!.id, this.newPassword.value).subscribe({
+    this._vendeurAPI.reinitPassword({userId: this.vendeur!.id, password: this.newPassword.value}).subscribe({
       next: response => {
         // console.log("Data receive: " + response);
 

@@ -257,7 +257,7 @@ export class UserListComponent implements OnInit {
     this.changeFormElement();
 
     if (this.utilisateur?.id) {
-      this._utilisateurAPI.reinitPassword(this.utilisateur.id, this.newPassword.value).subscribe({
+      this._utilisateurAPI.reinitPassword({userId: this.utilisateur.id, password: this.newPassword.value}).subscribe({
         next: () => {
           this.modalService.hide();
           this.toastService.success("Mot de passe réinitialisé avec succès", "Réinitialisation effectuée").onHidden.subscribe(() => {
