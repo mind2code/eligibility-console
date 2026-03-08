@@ -74,7 +74,8 @@ export const routes: Routes = [
       {
         path: 'transactions', loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent),
         children: [
-          { path: 'liste-transactions', loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent) },
+          { path: 'achat-energie', loadComponent: () => import('./features/transactions/transaction-list/transaction-list.component').then(m => m.TransactionListComponent) },
+          { path: 'dette', loadComponent: () => import('./features/transactions/transaction-dette-list/transaction-dette-list.component').then(m => m.TransactionDetteListComponent) },
         ],
         canActivate: [canActivateAuthRole],
         data: { role: 'admin' }

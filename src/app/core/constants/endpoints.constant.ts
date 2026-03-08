@@ -7,4 +7,5 @@ export const url_path = {
     VENDEURS:'/vendeur',
     UTILISATEURS:'/keycloak',
     TRANSACTIONS:'/transactions',
+    TRANSACTIONS_DETTE:'/transactions-dette',
 }

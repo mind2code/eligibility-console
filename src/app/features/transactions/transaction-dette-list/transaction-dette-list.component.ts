@@ -2,9 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Transaction } from '../../../core/model/transaction.model';
-import { TransactionEchec } from '../../../core/model/transaction-echec.model';
-import { TransactionService } from '../../../core/service/transaction.service';
+import { TransactionDette } from '../../../core/model/transaction-dette.model';
+import { TransactionDetteEchec } from '../../../core/model/transaction-dette-echec.model';
+import { TransactionDetteService } from '../../../core/service/transaction-dette.service';
 import { PartnerService } from '../../../core/service/partner.service';
 import { ToastService } from '../../../core/service/globals/toast.service';
 import { BreadcrumbsComponent } from '../../common/breadcrumbs/breadcrumbs.component';
@@ -17,28 +17,28 @@ import { Sort } from '@angular/material/sort';
 import { Partner } from '../../../core/model/partner.model';
 
 @Component({
-    selector: 'app-transaction-list',
+    selector: 'app-transaction-dette-list',
     imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, BreadcrumbsComponent, CollapseHeaderComponent, FooterComponent],
-    templateUrl: './transaction-list.component.html',
-    styleUrl: './transaction-list.component.scss'
+    templateUrl: './transaction-dette-list.component.html',
+    styleUrl: './transaction-dette-list.component.scss'
 })
-export class TransactionListComponent implements OnInit {
+export class TransactionDetteListComponent implements OnInit {
 
     breadCrumbItems: breadCrumbItems[] = [];
-    pageTitle = 'Transactions';
+    pageTitle = 'Transactions Dette';
 
     // Onglet actif (0 = réussies, 1 = échouées)
     activeTab = 0;
 
-    // Transactions réussies
-    successTransactions: Transaction[] = []
-    successTransactionsCopy: Transaction[] = []
-    successApiResponse!: ApiPaginatedResponse<Transaction>
+    // Transactions dette réussies
+    successTransactions: TransactionDette[] = []
+    successTransactionsCopy: TransactionDette[] = []
+    successApiResponse!: ApiPaginatedResponse<TransactionDette>
 
-    // Transactions échouées (modèle spécifique)
-    failedTransactions: TransactionEchec[] = []
-    failedTransactionsCopy: TransactionEchec[] = []
-    failedApiResponse!: ApiPaginatedResponse<TransactionEchec>
+    // Transactions dette échouées (modèle spécifique)
+    failedTransactions: TransactionDetteEchec[] = []
+    failedTransactionsCopy: TransactionDetteEchec[] = []
+    failedApiResponse!: ApiPaginatedResponse<TransactionDetteEchec>
 
     partners: Partner[] = [];
 
@@ -56,15 +56,15 @@ export class TransactionListComponent implements OnInit {
     currentSearchType = '';
     currentSearchValue = '';
 
-    private _transactionAPI = inject(TransactionService);
+    private _transactionDetteAPI = inject(TransactionDetteService);
     private _partnerAPI = inject(PartnerService);
     private _fb = inject(FormBuilder);
     private toastService = inject(ToastService);
 
     constructor() {
         this.breadCrumbItems = [
-            { label: 'Transactions' },
-            { label: 'Liste transactions', active: true }
+            { label: 'Transactions Dette' },
+            { label: 'Liste transactions dette', active: true }
         ];
 
         this.successApiResponse = {
@@ -100,7 +100,6 @@ export class TransactionListComponent implements OnInit {
 
     onSearchTypeChange(event: any) {
         this.searchType = event.target.value;
-        // reset the value and adjust validation when selecting "Tous les paiements"
         this.searchForm.patchValue({ searchValue: '' });
         const ctrl = this.searchForm.get('searchValue');
         if (this.searchType === 'all') {
@@ -130,7 +129,7 @@ export class TransactionListComponent implements OnInit {
             this.successApiResponse = { ...response, data: this.successTransactions };
         } else {
 
-            // Échouées -> mapper vers TransactionEchec
+            // Échouées -> mapper vers TransactionDetteEchec
             this.failedTransactions = response.data;
             this.failedTransactionsCopy = [...this.failedTransactions];
             this.failedApiResponse = { ...response, data: this.failedTransactions };
@@ -146,7 +145,6 @@ export class TransactionListComponent implements OnInit {
         const searchType = this.searchForm.value.searchType;
         const searchValue = this.searchForm.value.searchValue;
 
-        // if "all" selected we bypass validity of the value field
         if (searchType === 'all' || this.searchForm.valid) {
             // Store current search criteria
             this.currentSearchType = searchType;
@@ -178,14 +176,14 @@ export class TransactionListComponent implements OnInit {
     }
 
     searchByTransID(transID: string): void {
-        let apiSend = this.activeTab === 0 ? this._transactionAPI.getByTransID(transID, { page: this.page, size: this.size }) : this._transactionAPI.getEchecByTransID(transID, { page: this.page, size: this.size });
+        let apiSend = this.activeTab === 0 ? this._transactionDetteAPI.getByTransID(transID, { page: this.page, size: this.size }) : this._transactionDetteAPI.getEchecByTransID(transID, { page: this.page, size: this.size });
         apiSend.subscribe({
-            next: (response) => {
+            next: (response: ApiPaginatedResponse<any>) => {
                 this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error("Error fetching transaction:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche de la transaction.');
                 this.hasSearched = false;
@@ -197,14 +195,14 @@ export class TransactionListComponent implements OnInit {
     }
 
     searchByMeternum(meterNum: string): void {
-        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByMeternum(meterNum, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByMeternum(meterNum, { page: this.page, size: this.size });
+        let apiSend = this.activeTab === 0 ? this._transactionDetteAPI.getAllByMeternum(meterNum, { page: this.page, size: this.size }) : this._transactionDetteAPI.getAllEchecByMeternum(meterNum, { page: this.page, size: this.size });
         apiSend.subscribe({
-            next: (response) => {
+            next: (response: ApiPaginatedResponse<any>) => {
                 this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error("Error fetching transactions by meternum:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
@@ -216,14 +214,14 @@ export class TransactionListComponent implements OnInit {
     }
 
     searchByDate(date: string): void {
-        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByDate(date, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByDate(date, { page: this.page, size: this.size });
+        let apiSend = this.activeTab === 0 ? this._transactionDetteAPI.getAllByDate(date, { page: this.page, size: this.size }) : this._transactionDetteAPI.getAllEchecByDate(date, { page: this.page, size: this.size });
         apiSend.subscribe({
-            next: (response) => {
+            next: (response: ApiPaginatedResponse<any>) => {
                 this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error("Error fetching transactions by date:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
@@ -235,14 +233,14 @@ export class TransactionListComponent implements OnInit {
     }
 
     searchByPartner(apmlogin: string): void {
-        let apiSend = this.activeTab === 0 ? this._transactionAPI.getAllByPartner(apmlogin, { page: this.page, size: this.size }) : this._transactionAPI.getAllEchecByPartner(apmlogin, { page: this.page, size: this.size });
+        let apiSend = this.activeTab === 0 ? this._transactionDetteAPI.getAllByPartner(apmlogin, { page: this.page, size: this.size }) : this._transactionDetteAPI.getAllEchecByPartner(apmlogin, { page: this.page, size: this.size });
         apiSend.subscribe({
-            next: (response) => {
+            next: (response: ApiPaginatedResponse<any>) => {
                 this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error("Error fetching transactions by partner:", error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la recherche des transactions.');
                 this.hasSearched = false;
@@ -352,22 +350,21 @@ export class TransactionListComponent implements OnInit {
     getStatusClass(status: string | undefined): string {
         if (!status) return 'badge-secondary';
         if (status === '0') return 'badge-success';
-        // if (status !== '0') return 'badge-danger';
         return 'badge-secondary';
     }
 
     private searchAll(): void {
         const apiSend = this.activeTab === 0
-            ? this._transactionAPI.getAll({ page: this.page, size: this.size })
-            : this._transactionAPI.getAllEchec({ page: this.page, size: this.size });
+            ? this._transactionDetteAPI.getAll({ page: this.page, size: this.size })
+            : this._transactionDetteAPI.getAllEchec({ page: this.page, size: this.size });
         apiSend.subscribe({
-            next: (response) => {
+            next: (response: any) => {
                 this.separateTransactions(response);
                 this.hasSearched = true;
                 this.loadingBtn = false;
             },
-            error: (error) => {
-                console.error('Error fetching all transactions:', error);
+            error: (error: any) => {
+                console.error('Error fetching all transactions dette:', error);
                 this.toastService.error('Erreur', 'Une erreur est survenue lors de la récupération des transactions.');
                 this.hasSearched = false;
                 this.successTransactions = [];

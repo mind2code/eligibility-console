@@ -27,8 +27,8 @@ export const routes = {
   dictionnaireForm: '/dictionnaires/form-dictionnaires',
 
   //Transactions
-  transactionAchatsList: '/transactions/liste-transactions',
-  transactionDetteList: '/transactions/debt-transactions',
+  transactionAchatsList: '/transactions/achat-energie',
+  transactionDetteList: '/transactions/dette',
 
   // auth routes
   signin: '/signin',

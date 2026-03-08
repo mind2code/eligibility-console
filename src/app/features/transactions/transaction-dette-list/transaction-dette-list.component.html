@@ -5,7 +5,7 @@
       class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
     >
       <app-breadcrumbs
-        title="Gestion des transactions"
+        title="Gestion des transactions dette"
         [breadcrumbItems]="breadCrumbItems"
       ></app-breadcrumbs>
       <app-collapse-header></app-collapse-header>
@@ -16,7 +16,7 @@
       <div
         class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
       >
-        <h5>Consulter les Transactions</h5>
+        <h5>Consulter les Transactions Dette</h5>
       </div>
       <div class="card-body">
         <!-- Tabs Navigation -->
@@ -220,12 +220,9 @@
                       <th class="col">Partenaire</th>
                       <th class="col">Système</th>
                       <th class="col">Montant</th>
-                      @if (activeTab === 0) {
-                        <th class="col">Token</th>
-                        <th class="col">KWH</th>
-                      } @else {
+                      @if (activeTab !== 0) {
                         <th class="col">Cause</th>
-                      }
+                      } 
                       <th class="col">Date</th>
                       <th class="col">Status</th>
                     </tr>
@@ -240,8 +237,6 @@
                         <td>{{ transaction.partenaire }}</td>
                         <td>{{ transaction.system }}</td>
                         <td class="fw-bold">{{ transaction.amount }} FCFA</td>
-                        <td><span class="badge badge-sm badge-info">{{ transaction.token }}</span></td>
-                        <td class="fw-bold">{{ transaction.kwh }}</td>
                         <td>{{ transaction.transactionDate }}</td>
                         <td>
                           <span
@@ -254,7 +249,7 @@
                       </tr>
                       } @if (successTransactions.length === 0) {
                       <tr>
-                        <td colspan="8">
+                        <td colspan="9">
                           <h5 class="no-record">Aucune transaction réussie trouvée</h5>
                         </td>
                       </tr>
@@ -282,7 +277,7 @@
                       </tr>
                       } @if (failedTransactions.length === 0) {
                       <tr>
-                        <td colspan="8">
+                        <td colspan="9">
                           <h5 class="no-record">Aucune transaction échouée trouvée</h5>
                         </td>
                       </tr>
@@ -400,12 +395,11 @@
         } @else {
         <div class="alert alert-info" role="alert">
           <i class="ti ti-info-circle me-2"></i>
-          Renseignez les critères de recherche ci-dessus pour afficher les transactions.
+          Renseignez les critères de recherche ci-dessus pour afficher les transactions dette.
         </div>
         }
       </div>
-
-      <app-footer></app-footer>
     </div>
   </div>
+  <app-footer></app-footer>
 </div>
