@@ -170,6 +170,9 @@
             },
             "development": {
               "buildTarget": "template:build:development"
+            },
+             "recette": { 
+              "buildTarget": "template:build:recette"
             }
           },
           "defaultConfiguration": "development"
