@@ -249,6 +249,7 @@ export interface SideBarMenu {
   changeLogVersion?: boolean;
   hasSubRouteTwo?: boolean;
   page1?: string;
+  univers?: string[];
 }
 export interface breadCrumbItems {
   label: string;

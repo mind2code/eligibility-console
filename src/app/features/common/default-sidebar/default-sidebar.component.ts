@@ -7,20 +7,21 @@ import { CommonService } from '../../../shared/common/common.service';
 import { routes } from '../../../shared/routes/routes';
 import { CommonModule } from '@angular/common';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { environment } from '../../../../environments/environment';
 @Component({
-    selector: 'app-default-sidebar',
-    templateUrl: './default-sidebar.component.html',
-    styleUrl: './default-sidebar.component.scss',
-    imports: [CommonModule,RouterLink,NgScrollbarModule]
+  selector: 'app-default-sidebar',
+  templateUrl: './default-sidebar.component.html',
+  styleUrl: './default-sidebar.component.scss',
+  imports: [CommonModule, RouterLink, NgScrollbarModule]
 })
-export class DefaultSidebarComponent implements OnDestroy , OnInit{
+export class DefaultSidebarComponent implements OnDestroy, OnInit {
   public routes = routes;
   public multilevel: boolean[] = [false, false, false];
   base = 'dashboard';
   page = '';
   last = '';
-  page1='';
-  isOpen=false;
+  page1 = '';
+  isOpen = false;
   openMenuItem: any = null;
   openSubmenuOneItem: any = null;
   side_bar_data: SideBar[] = [];
@@ -29,6 +30,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
   private data = inject(DataService);
   private sideBar = inject(SideBarService);
   private common = inject(CommonService);
+  univers: string = environment.univers
 
   constructor() {
 
@@ -36,6 +38,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     // get sidebar data as observable because data is controlled for design to expand submenus
     this.data.getSideBarData.subscribe((res: SideBar[]) => {
       this.side_bar_data = res;
+      this.side_bar_data = this.filterMenuByRole(this.univers);
     });
     this.common.base.subscribe((res: string) => {
       this.base = res;
@@ -52,6 +55,18 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
 
   }
 
+  public filterMenuByRole(role: string): SideBar[] {
+    return this.side_bar_data
+      .map(section => ({
+        ...section,
+        menu: section.menu.filter(menu => {
+          if (!menu.univers) return true;
+          return menu.univers.includes(role);
+        })
+      }))
+      .filter(section => section.menu.length > 0);
+  }
+
 
   public miniSideBarMouseHover(position: string): void {
     if (position === 'over') {
@@ -61,7 +76,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     }
   }
   public expandSubMenus(menu: SideBarMenu): void {
-    this.isOpen= false
+    this.isOpen = false
     sessionStorage.setItem('menuValue', menu.menuValue);
     this.side_bar_data.map((mainMenus: SideBar) => {
       mainMenus.menu.map((resMenu: SideBarMenu) => {
@@ -77,7 +92,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
   }
   public expandSubMenusActive(): void {
     const activeMenu = sessionStorage.getItem('menuValue');
-    if(activeMenu === null) {
+    if (activeMenu === null) {
       this.side_bar_data.map((mainMenus: SideBar) => {
         mainMenus.menu.map((resMenu: SideBarMenu) => {
           // collapse other submenus which are open
@@ -90,8 +105,8 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
         });
       });
       this.isOpen = true
-    }else {
-      this.isOpen= false
+    } else {
+      this.isOpen = false
     }
     this.side_bar_data.map((mainMenus: SideBar) => {
       mainMenus.menu.map((resMenu: SideBarMenu) => {
@@ -110,7 +125,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     this.router.events.subscribe((event: object) => {
       if (event instanceof NavigationStart) {
         const splitVal = event.url.split('/');
-        
+
         this.base = splitVal[1];
         this.page = splitVal[2];
         this.last = splitVal[3];

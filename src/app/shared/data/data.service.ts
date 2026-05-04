@@ -2607,6 +2607,7 @@ export class DataService {
           base: 'index',
           materialicons: 'start',
           subMenus: [],
+          univers:['CIE','SODECI']
         },
         {
           menuValue: 'Gestion des partenaires',
@@ -2618,6 +2619,7 @@ export class DataService {
           materialicons: '',
           subMenus: [
           ],
+          univers:['CIE','SODECI']
         },
         /*{
           menuValue: 'Gestion des comptes',
@@ -2638,6 +2640,7 @@ export class DataService {
           base: 'vendeurList',
           materialicons: '',
           subMenus: [],
+          univers:['CIE']
         },
         {
           menuValue: 'Gestion des compteurs',
@@ -2648,6 +2651,7 @@ export class DataService {
           base: 'compteurList',
           materialicons: '',
           subMenus: [],
+          univers:['CIE']
         },
       ],
     },
@@ -2695,6 +2699,7 @@ export class DataService {
           base: 'super-admin',
           materialicons: '',
           subMenus: [],
+          univers:['CIE']
         },
         // {
         //   menuValue: 'Gestion des rôles',
@@ -2715,6 +2720,7 @@ export class DataService {
           base: 'super-admin',
           materialicons: '',
           subMenus: [],
+          univers:['CIE']
         },
       ]
     }

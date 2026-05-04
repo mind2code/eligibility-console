@@ -78,6 +78,8 @@ export class PartnerlistComponent {
     class: 'modal-lg modal-dialog-centered'
   };
 
+  univers: string = environment.univers
+
   constructor(
     private _partnerAPI: PartnerService,
     private _fb: FormBuilder,
@@ -351,14 +353,14 @@ export class PartnerlistComponent {
     this._partnerParamService.getAllByPartner(partnerId).subscribe({
       next: (response) => {
         console.log('Partner parameters for JSON:', response);
-        
+
         if (response.data && response.data.length > 0) {
           // Convert parameters array to JSON object
           const jsonObject: { [key: string]: string } = {};
           response.data.forEach((param: { paramKey: string | number; paramValue: string; }) => {
             jsonObject[param.paramKey] = param.paramValue;
           });
-          
+
           // Format and populate the JSON field
           const jsonString = JSON.stringify(jsonObject, null, 2);
           this.jsonConfigForm.patchValue({
@@ -485,7 +487,7 @@ export class PartnerlistComponent {
       // Parse JSON and convert to PartnerParamRequest array
       try {
         const parsedJson = JSON.parse(jsonData);
-        
+
         // Convert each JSON property to a PartnerParamRequest entry
         const paramRequest: PartnerParamRequest[] = [];
         for (const [key, value] of Object.entries(parsedJson)) {

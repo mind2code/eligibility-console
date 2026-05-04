@@ -8,5 +8,6 @@ export const environment = {
         realm: 'eligibility',
         clientId: 'admin-portal'
     },
-    pageLimit: 10 
+    pageLimit: 10,
+    univers: 'CIE'
 }

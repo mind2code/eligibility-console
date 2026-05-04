@@ -158,6 +158,32 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "dev-sodeci": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sodeci.dev.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -173,6 +199,13 @@
             },
              "recette": { 
               "buildTarget": "template:build:recette"
+            },
+            
+             "integration": { 
+              "buildTarget": "template:build:integration"
+            },
+            "dev-sodeci": {
+              "buildTarget": "template:build:dev-sodeci"
             }
           },
           "defaultConfiguration": "development"

@@ -8,6 +8,7 @@ export const environment = {
         realm: 'eligibility',
         clientId: 'devportal'
     },
-    pageLimit: 10 
+    pageLimit: 10,
+    univers: 'CIE'
     
 }

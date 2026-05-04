@@ -62,7 +62,12 @@
       <div
         class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
       >
-        <h5>Liste des Partenaires <span class="badge bg-primary rounded-pill">{{apiResponse.total_items}}</span></h5>
+        <h5>
+          Liste des Partenaires
+          <span class="badge bg-primary rounded-pill">{{
+            apiResponse.total_items
+          }}</span>
+        </h5>
         <div
           class="d-flex my-xl-auto right-content align-items-center flex-wrap row-gap-3"
         ></div>
@@ -114,85 +119,110 @@
                       <th class="col">Email</th>
                       <th class="col">Téléphone</th>
                       <th class="col">N° de compte</th>
-                      <th class="col">Solde actuel</th>
-                      <th class="col">Alerte Solde</th>
+                      @if (univers === "CIE") {
+                        <th class="col">Solde actuel</th>
+                        <th class="col">Alerte Solde</th>
+                      }
                       <th class="col">Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (partenaire of partenaires; track $index) {
-                    <tr>
-                      <th scope="row">{{ $index + 1 }}</th>
-                      <td class="fw-bold">{{ partenaire.name }}</td>
-                      <td class="fw-bold">{{ partenaire.code }}</td>
-                      <td>{{ partenaire.email }}</td>
-                      <td>{{ partenaire.phone }}</td>
-                      <td class="fw-bold">{{ partenaire.accountNumber }}</td>
-                      <td class="fw-bold text-primary">
-                        {{ partenaire.balance | number : "1.0-0" : "fr-FR" }}
-                        FCFA
-                      </td>
-                      <td class="fw-bold" title="Le solde minimum défini est {{partenaire.minimumBalance}}">
-                        @if(partenaire.minimumBalance == null || partenaire.minimumBalance == undefined){
-                          <span class="badge badge-info d-inline-flex align-items-center badge-xs">Seuil non défini</span>
-                        } @else if (partenaire.balance <= partenaire.minimumBalance) {
-                          <span class="badge badge-danger d-inline-flex align-items-center badge-xs">Seuil atteint</span>
-                        } @else {
-                          <span class="badge badge-success d-inline-flex align-items-center badge-xs">Solde OK</span>
+                      <tr>
+                        <th scope="row">{{ $index + 1 }}</th>
+                        <td class="fw-bold">{{ partenaire.name }}</td>
+                        <td class="fw-bold">{{ partenaire.code }}</td>
+                        <td>{{ partenaire.email }}</td>
+                        <td>{{ partenaire.phone }}</td>
+                        <td class="fw-bold">{{ partenaire.accountNumber }}</td>
+                        @if (univers === "CIE") {
+                          <td class="fw-bold text-primary">
+                            {{ partenaire.balance | number: "1.0-0" : "fr-FR" }}
+                            FCFA
+                          </td>
+                          <td
+                            class="fw-bold"
+                            title="Le solde minimum défini est {{
+                              partenaire.minimumBalance
+                            }}"
+                          >
+                            @if (
+                              partenaire.minimumBalance == null ||
+                              partenaire.minimumBalance == undefined
+                            ) {
+                              <span
+                                class="badge badge-info d-inline-flex align-items-center badge-xs"
+                                >Seuil non défini</span
+                              >
+                            } @else if (
+                              partenaire.balance <= partenaire.minimumBalance
+                            ) {
+                              <span
+                                class="badge badge-danger d-inline-flex align-items-center badge-xs"
+                                >Seuil atteint</span
+                              >
+                            } @else {
+                              <span
+                                class="badge badge-success d-inline-flex align-items-center badge-xs"
+                                >Solde OK</span
+                              >
+                            }
+                          </td>
                         }
-                      </td>
-                      <td>
-                        <span
-                          class="badge d-inline-flex align-items-center badge-xs"
-                          [ngClass]="
-                            partenaire.active ? 'badge-success' : 'badge-danger'
-                          "
-                        >
-                          <i class="ti ti-point-filled me-1"></i
-                          >{{ partenaire.active ? "Actif" : "Inactif" }}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="action-icon d-inline-flex">
-                          <a class="me-2" 
-                            (click)="changeStatus(partenaire)"
-                            ><i
-                              class="bi"
-                              [ngClass]="
-                                partenaire.active ? 'bi-pause' : 'bi-play'
+                        <td>
+                          <span
+                            class="badge d-inline-flex align-items-center badge-xs"
+                            [ngClass]="
+                              partenaire.active
+                                ? 'badge-success'
+                                : 'badge-danger'
+                            "
+                          >
+                            <i class="ti ti-point-filled me-1"></i
+                            >{{ partenaire.active ? "Actif" : "Inactif" }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="action-icon d-inline-flex">
+                            <a class="me-2" (click)="changeStatus(partenaire)"
+                              ><i
+                                class="bi"
+                                [ngClass]="
+                                  partenaire.active ? 'bi-pause' : 'bi-play'
+                                "
+                              ></i
+                            ></a>
+                            <a
+                              class="me-2"
+                              (click)="
+                                openModal(addPartnerModal, partenaire, true)
                               "
-                            ></i
-                          ></a>
-                          <a
-                            class="me-2"
-                            (click)="
-                              openModal(addPartnerModal, partenaire, true)
-                            "
-                            ><i class="ti ti-edit"></i
-                          ></a>
+                              ><i class="ti ti-edit"></i
+                            ></a>
 
-                          <a
-                            (click)="
-                              openModal(
-                                deletePartnerModal,
-                                partenaire,
-                                false,
-                                false,
-                                true
-                              )
-                            "
-                            ><i class="ti ti-trash"></i
-                          ></a>
-                        </div>
-                      </td>
-                    </tr>
-                    } @if (partenaires.length === 0) {
-                    <tr>
-                      <td colspan="12">
-                        <h5 class="no-record">Aucun partenaire trouvé</h5>
-                      </td>
-                    </tr>
+                            <a
+                              (click)="
+                                openModal(
+                                  deletePartnerModal,
+                                  partenaire,
+                                  false,
+                                  false,
+                                  true
+                                )
+                              "
+                              ><i class="ti ti-trash"></i
+                            ></a>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                    @if (partenaires.length === 0) {
+                      <tr>
+                        <td colspan="12">
+                          <h5 class="no-record">Aucun partenaire trouvé</h5>
+                        </td>
+                      </tr>
                     }
                   </tbody>
                 </table>
@@ -201,21 +231,27 @@
             <div class="row">
               <div class="col-sm-12 col-md-5">
                 <div class="dataTables_info">
-                  @if(apiResponse.current_page!=undefined){ Affichage de
-                  <b>{{
-                    apiResponse.current_page * apiResponse.page_size + 1
-                  }}</b>
-                  à
-                  <b>
-                    @if (apiResponse.current_page+1==apiResponse.total_pages) {
-                    {{ apiResponse.total_items }}
-                    } @else {
-                    {{ (apiResponse.current_page + 1) * apiResponse.page_size }}
-                    }
-                  </b>
-                  sur
-                  <b>{{ apiResponse.total_items }}</b>
-                  }@else { Affichage de 0 à {{ size }} sur {{ page }}
+                  @if (apiResponse.current_page != undefined) {
+                    Affichage de
+                    <b>{{
+                      apiResponse.current_page * apiResponse.page_size + 1
+                    }}</b>
+                    à
+                    <b>
+                      @if (
+                        apiResponse.current_page + 1 == apiResponse.total_pages
+                      ) {
+                        {{ apiResponse.total_items }}
+                      } @else {
+                        {{
+                          (apiResponse.current_page + 1) * apiResponse.page_size
+                        }}
+                      }
+                    </b>
+                    sur
+                    <b>{{ apiResponse.total_items }}</b>
+                  } @else {
+                    Affichage de 0 à {{ size }} sur {{ page }}
                   }
                 </div>
               </div>
@@ -226,14 +262,14 @@
                       <li
                         class="page-item"
                         [ngClass]="{
-                          disabled: apiResponse!.current_page === 0
+                          disabled: apiResponse!.current_page === 0,
                         }"
                       >
                         <a
                           class="page-link"
                           href="javascript:void(0);"
                           [ngClass]="{
-                            'text-primary': apiResponse!.current_page !== 0
+                            'text-primary': apiResponse!.current_page !== 0,
                           }"
                           (click)="changePage('prev')"
                         >
@@ -244,16 +280,18 @@
                         class="bg-primary text-white page-item d-flex align-items-center justify-content-center me-2 ms-2 ps-2 pe-2"
                       >
                         <span
-                          >Page @if(apiResponse.current_page!=undefined){
-                          {{
-                            apiResponse.current_page +
-                              1 +
-                              " / " +
-                              apiResponse.total_pages
-                          }}
-                          }@else {
-                          {{ page }} / {{ page }} }</span
-                        >
+                          >Page
+                          @if (apiResponse.current_page != undefined) {
+                            {{
+                              apiResponse.current_page +
+                                1 +
+                                " / " +
+                                apiResponse.total_pages
+                            }}
+                          } @else {
+                            {{ page }} / {{ page }}
+                          }
+                        </span>
                       </li>
 
                       <li
@@ -261,7 +299,7 @@
                         [ngClass]="{
                           disabled:
                             apiResponse!.current_page + 1 ===
-                            apiResponse!.total_pages
+                            apiResponse!.total_pages,
                         }"
                       >
                         <a
@@ -269,7 +307,7 @@
                           [ngClass]="{
                             'text-primary':
                               apiResponse!.current_page + 1 !==
-                              apiResponse!.total_pages
+                              apiResponse!.total_pages,
                           }"
                           href="javascript:void(0);"
                           (click)="changePage('next')"
@@ -308,7 +346,9 @@
     <form [formGroup]="partnerForm" (submit)="savePartner()" class="px-3">
       <div class="modal-body">
         <div class="mb-3">
-          <label for="name" class="form-label">Nom <span class="text-danger">*</span></label>
+          <label for="name" class="form-label"
+            >Nom <span class="text-danger">*</span></label
+          >
           <input
             class="form-control"
             type="text"
@@ -321,16 +361,19 @@
                 partnerForm.get('name')?.touched,
               'is-valid':
                 partnerForm.get('name')?.valid &&
-                partnerForm.get('name')?.touched
+                partnerForm.get('name')?.touched,
             }"
           />
-          @if (partnerForm.get('name')?.invalid &&
-          partnerForm.get('name')?.touched) {
-          <div class="invalid-feedback">Le nom du partenaire est requis.</div>
+          @if (
+            partnerForm.get("name")?.invalid && partnerForm.get("name")?.touched
+          ) {
+            <div class="invalid-feedback">Le nom du partenaire est requis.</div>
           }
         </div>
         <div class="mb-3">
-          <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
+          <label for="code" class="form-label"
+            >Code <span class="text-danger">*</span></label
+          >
           <input
             class="form-control"
             type="text"
@@ -343,12 +386,15 @@
                 partnerForm.get('code')?.touched,
               'is-valid':
                 partnerForm.get('code')?.valid &&
-                partnerForm.get('code')?.touched
+                partnerForm.get('code')?.touched,
             }"
           />
-          @if (partnerForm.get('code')?.invalid &&
-          partnerForm.get('code')?.touched) {
-          <div class="invalid-feedback">Le code du partenaire est requis.</div>
+          @if (
+            partnerForm.get("code")?.invalid && partnerForm.get("code")?.touched
+          ) {
+            <div class="invalid-feedback">
+              Le code du partenaire est requis.
+            </div>
           }
         </div>
         <div class="mb-3">
@@ -375,21 +421,26 @@
                 partnerForm.get('email')?.touched,
               'is-valid':
                 partnerForm.get('email')?.valid &&
-                partnerForm.get('email')?.touched
+                partnerForm.get('email')?.touched,
             }"
           />
-          @if (partnerForm.get('email')?.touched &&
-          partnerForm.get('email')?.errors?.['email']) {
-          <div class="invalid-feedback">Mauvais format d'email.</div>
+          @if (
+            partnerForm.get("email")?.touched &&
+            partnerForm.get("email")?.errors?.["email"]
+          ) {
+            <div class="invalid-feedback">Mauvais format d'email.</div>
           }
         </div>
 
         <div class="mb-3">
-          <label for="minimumBalance" class="form-label">Solde minimum avant alerte <span class="text-danger">*</span></label>
+          <label for="minimumBalance" class="form-label"
+            >Solde minimum avant alerte
+            <span class="text-danger">*</span></label
+          >
           <input
             class="form-control"
             type="text"
-             mask="separator.2"
+            mask="separator.2"
             id="minimumBalance"
             formControlName="minimumBalance"
             [ngClass]="{
@@ -398,32 +449,40 @@
                 partnerForm.get('minimumBalance')?.touched,
               'is-valid':
                 partnerForm.get('minimumBalance')?.valid &&
-                partnerForm.get('minimumBalance')?.touched
+                partnerForm.get('minimumBalance')?.touched,
             }"
           />
-          @if (partnerForm.get('minimumBalance')?.touched &&
-          partnerForm.get('minimumBalance')?.errors?.['required']) {
-          <div class="invalid-feedback">Veuillez renseigner le solde minimum.</div>
+          @if (
+            partnerForm.get("minimumBalance")?.touched &&
+            partnerForm.get("minimumBalance")?.errors?.["required"]
+          ) {
+            <div class="invalid-feedback">
+              Veuillez renseigner le solde minimum.
+            </div>
           }
-          @if (partnerForm.get('minimumBalance')?.touched &&
-          partnerForm.get('minimumBalance')?.errors?.['min']) {
-          <div class="invalid-feedback">Le solde minimum ne peut être inférieur à 0.</div>
+          @if (
+            partnerForm.get("minimumBalance")?.touched &&
+            partnerForm.get("minimumBalance")?.errors?.["min"]
+          ) {
+            <div class="invalid-feedback">
+              Le solde minimum ne peut être inférieur à 0.
+            </div>
           }
         </div>
 
         <!-- {{factureForm.value|json}} -->
         @if (apiCallError) {
-        <div class="mb-3">
-          <div
-            class="alert alert-danger d-flex align-items-center"
-            role="alert"
-          >
-            <i class="fa fa-warning flex-shrink-0 me-2"></i>
-            <div>
-              {{ apiCallError.message }}
+          <div class="mb-3">
+            <div
+              class="alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="fa fa-warning flex-shrink-0 me-2"></i>
+              <div>
+                {{ apiCallError.message }}
+              </div>
             </div>
           </div>
-        </div>
         }
       </div>
       <div class="modal-footer">
@@ -443,7 +502,7 @@
             class="fa"
             [ngClass]="{
               'fa-spin fa-spinner': loadingBtn,
-              'fa-check': !loadingBtn
+              'fa-check': !loadingBtn,
             }"
           ></i>
           {{ textButton }}
@@ -510,7 +569,9 @@
       <form [formGroup]="paramForm" (ngSubmit)="saveParams()" class="px-3">
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Partenaire <span class="text-danger">*</span></label>
+            <label class="form-label"
+              >Partenaire <span class="text-danger">*</span></label
+            >
             <select
               formControlName="partnerId"
               (change)="getPartnerParameters($event)"
@@ -518,17 +579,19 @@
               [ngClass]="{
                 'is-invalid':
                   paramForm.get('partnerId')?.invalid &&
-                  paramForm.get('partnerId')?.touched
+                  paramForm.get('partnerId')?.touched,
               }"
             >
               <option [ngValue]="null">Sélectionner un partenaire</option>
               @for (partner of partenairesList; track $index) {
-              <option [ngValue]="partner.id">{{ partner.name }}</option>
+                <option [ngValue]="partner.id">{{ partner.name }}</option>
               }
             </select>
-            @if (paramForm.get('partnerId')?.invalid &&
-            paramForm.get('partnerId')?.touched) {
-            <div class="invalid-feedback">Le partenaire est requis.</div>
+            @if (
+              paramForm.get("partnerId")?.invalid &&
+              paramForm.get("partnerId")?.touched
+            ) {
+              <div class="invalid-feedback">Le partenaire est requis.</div>
             }
           </div>
 
@@ -586,7 +649,7 @@
               class="fa"
               [ngClass]="{
                 'fa-spin fa-spinner': loadingBtn,
-                'fa-check': !loadingBtn
+                'fa-check': !loadingBtn,
               }"
             ></i>
             {{ textButton }}
@@ -602,10 +665,16 @@
       role="tabpanel"
       aria-labelledby="tab-json-config"
     >
-      <form [formGroup]="jsonConfigForm" (ngSubmit)="saveJsonConfig()" class="px-3">
+      <form
+        [formGroup]="jsonConfigForm"
+        (ngSubmit)="saveJsonConfig()"
+        class="px-3"
+      >
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Partenaire <span class="text-danger">*</span></label>
+            <label class="form-label"
+              >Partenaire <span class="text-danger">*</span></label
+            >
             <select
               formControlName="partnerId"
               (change)="getPartnerParametersForJson($event)"
@@ -613,22 +682,26 @@
               [ngClass]="{
                 'is-invalid':
                   jsonConfigForm.get('partnerId')?.invalid &&
-                  jsonConfigForm.get('partnerId')?.touched
+                  jsonConfigForm.get('partnerId')?.touched,
               }"
             >
               <option [ngValue]="null">Sélectionner un partenaire</option>
               @for (partner of partenairesList; track $index) {
-              <option [ngValue]="partner.id">{{ partner.name }}</option>
+                <option [ngValue]="partner.id">{{ partner.name }}</option>
               }
             </select>
-            @if (jsonConfigForm.get('partnerId')?.invalid &&
-            jsonConfigForm.get('partnerId')?.touched) {
-            <div class="invalid-feedback">Le partenaire est requis.</div>
+            @if (
+              jsonConfigForm.get("partnerId")?.invalid &&
+              jsonConfigForm.get("partnerId")?.touched
+            ) {
+              <div class="invalid-feedback">Le partenaire est requis.</div>
             }
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Configuration JSON <span class="text-danger">*</span></label>
+            <label class="form-label"
+              >Configuration JSON <span class="text-danger">*</span></label
+            >
             <textarea
               formControlName="jsonConfig"
               class="form-control"
@@ -641,21 +714,27 @@
                 'is-valid':
                   jsonConfigForm.get('jsonConfig')?.valid &&
                   jsonConfigForm.get('jsonConfig')?.touched &&
-                  !jsonConfigForm.get('jsonConfig')?.hasError('required')
+                  !jsonConfigForm.get('jsonConfig')?.hasError('required'),
               }"
             ></textarea>
-            @if (jsonConfigForm.get('jsonConfig')?.touched) {
-              @if (jsonConfigForm.get('jsonConfig')?.hasError('required')) {
-              <div class="invalid-feedback d-block">La configuration JSON est requise.</div>
+            @if (jsonConfigForm.get("jsonConfig")?.touched) {
+              @if (jsonConfigForm.get("jsonConfig")?.hasError("required")) {
+                <div class="invalid-feedback d-block">
+                  La configuration JSON est requise.
+                </div>
               }
-              @if (jsonConfigForm.get('jsonConfig')?.hasError('invalidJson')) {
-              <div class="invalid-feedback d-block">Le JSON n'est pas valide. Veuillez vérifier la syntaxe.</div>
+              @if (jsonConfigForm.get("jsonConfig")?.hasError("invalidJson")) {
+                <div class="invalid-feedback d-block">
+                  Le JSON n'est pas valide. Veuillez vérifier la syntaxe.
+                </div>
               }
             }
             <small class="form-text text-muted d-block mt-2">
               Veuillez entrer une configuration JSON valide. Exemple:
               <br />
-              {{'{ "login": "144QbkRBrkL33qRZdUVShW9wQsYa", "user": "jamie", "userid": "H99150101", ... }'}}
+              {{
+                '{ "login": "144QbkRBrkL33qRZdUVShW9wQsYa", "user": "jamie", "userid": "H99150101", ... }'
+              }}
             </small>
           </div>
         </div>
@@ -676,7 +755,7 @@
               class="fa"
               [ngClass]="{
                 'fa-spin fa-spinner': loadingBtn,
-                'fa-check': !loadingBtn
+                'fa-check': !loadingBtn,
               }"
             ></i>
             {{ textButton }}
@@ -721,7 +800,7 @@
           class="fa"
           [ngClass]="{
             'fa-spin fa-spinner': loadingBtn,
-            'fa-check': !loadingBtn
+            'fa-check': !loadingBtn,
           }"
         ></i>
         {{ textButton }}
@@ -755,17 +834,19 @@
             [ngClass]="{
               'is-invalid':
                 formCredit.get('partnerId')?.invalid &&
-                formCredit.get('partnerId')?.touched
+                formCredit.get('partnerId')?.touched,
             }"
           >
             <option [ngValue]="null">Sélectionner un partenaire</option>
             @for (partner of partenairesList; track $index) {
-            <option [ngValue]="partner.id">{{ partner.name }}</option>
+              <option [ngValue]="partner.id">{{ partner.name }}</option>
             }
           </select>
-          @if (formCredit.get('partnerId')?.invalid &&
-          formCredit.get('partnerId')?.touched) {
-          <div class="invalid-feedback">Le partenaire est requis.</div>
+          @if (
+            formCredit.get("partnerId")?.invalid &&
+            formCredit.get("partnerId")?.touched
+          ) {
+            <div class="invalid-feedback">Le partenaire est requis.</div>
           }
         </div>
         <div class="mb-3">
@@ -784,19 +865,21 @@
                 formCredit.get('montant')?.touched,
               'is-valid':
                 formCredit.get('montant')?.valid &&
-                formCredit.get('montant')?.touched
+                formCredit.get('montant')?.touched,
             }"
           />
-          @if (formCredit.get('montant')?.invalid &&
-          formCredit.get('montant')?.touched) {
-          <div class="invalid-feedback">
-            Le montant de rechargement est requis.
-          </div>
+          @if (
+            formCredit.get("montant")?.invalid &&
+            formCredit.get("montant")?.touched
+          ) {
+            <div class="invalid-feedback">
+              Le montant de rechargement est requis.
+            </div>
           }
-          @if (formCredit.get('montant')?.errors?.['min']) {
-          <div class="invalid-feedback">
-            Le montant de rechargement minimum est de 500.
-          </div>
+          @if (formCredit.get("montant")?.errors?.["min"]) {
+            <div class="invalid-feedback">
+              Le montant de rechargement minimum est de 500.
+            </div>
           }
         </div>
         <div class="mb-3">
@@ -812,17 +895,17 @@
 
         <!-- {{factureForm.value|json}} -->
         @if (apiCallError) {
-        <div class="mb-3">
-          <div
-            class="alert alert-danger d-flex align-items-center"
-            role="alert"
-          >
-            <i class="fa fa-warning flex-shrink-0 me-2"></i>
-            <div>
-              {{ apiCallError.message }}
+          <div class="mb-3">
+            <div
+              class="alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="fa fa-warning flex-shrink-0 me-2"></i>
+              <div>
+                {{ apiCallError.message }}
+              </div>
             </div>
           </div>
-        </div>
         }
       </div>
       <div class="modal-footer">
@@ -842,7 +925,7 @@
             class="fa"
             [ngClass]="{
               'fa-spin fa-spinner': loadingBtn,
-              'fa-check': !loadingBtn
+              'fa-check': !loadingBtn,
             }"
           ></i>
           {{ textButton }}
