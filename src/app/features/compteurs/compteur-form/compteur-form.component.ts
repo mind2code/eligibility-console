@@ -109,7 +109,7 @@ export class CompteurFormComponent implements OnInit {
       next: (response) => {
         console.log(response);
 
-        this.fabricants = response.data;
+        this.fabricants = response.data.content;
 
         this.loadModeles()
       },

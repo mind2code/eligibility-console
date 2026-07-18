@@ -92,7 +92,9 @@ export class VendorListComponent {
   }
 
   loadVendeurs() {
-
+    console.log(this.page);
+    console.log(this.size);
+    
     this._vendeurAPI.getAllByPage({ page: this.page, size: this.size }).subscribe({
       next: (response) => {
         console.log(response);

@@ -184,6 +184,32 @@
                 }
               ],
               "outputHashing": "all"
+            },
+            "recette-sodeci": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sodeci.rec.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": false
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "5mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -206,6 +232,9 @@
             },
             "dev-sodeci": {
               "buildTarget": "template:build:dev-sodeci"
+            },
+            "recette-sodeci": { 
+              "buildTarget": "template:build:recette-sodeci"
             }
           },
           "defaultConfiguration": "development"
