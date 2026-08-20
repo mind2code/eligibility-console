@@ -30,6 +30,9 @@ export const routes = {
   transactionAchatsList: '/transactions/achat-energie',
   transactionDetteList: '/transactions/dette',
 
+  //Clients
+  clientSearch: '/clients/recherche',
+
   // auth routes
   signin: '/signin',
   signup: '/signup',

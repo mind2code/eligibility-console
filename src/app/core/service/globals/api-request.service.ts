@@ -35,6 +35,20 @@ export class ApiRequestService {
     // console.log("endpoint: " + `${environment.BASE_URL_API}${parameter.endpoint}` + ", data: " + parameter.data)
     return this.http.post(`${environment.apiUrl}${parameter.endpoint}`, parameter.data, { headers: this.httpHeader(), params: parameter.params });
   }
+
+  /**
+   * Envoie un corps brut (ex: XML) avec un Content-Type personnalisé.
+   * Utilisé notamment pour les endpoints vending qui attendent un body XML
+   * de la forme <xml meterNum="..."/> tel que défini dans la collection Postman.
+   */
+  postRaw(parameter: Required<{ endpoint: string, data: string, contentType: string }>): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': parameter.contentType,
+      'Accept': '*/*',
+    });
+    return this.http.post(`${environment.apiUrl}${parameter.endpoint}`, parameter.data, { headers });
+  }
+
   postForFile(parameter: Required<{ endpoint: string, data: any }>): Observable<any> {
     // console.log("endpoint: " + `${environment.BASE_URL_API}${parameter.endpoint}` + ", data: " + parameter.data)
     return this.http.post(`${environment.apiUrl}${parameter.endpoint}`, parameter.data, { headers: this.httpHeaderForFile() });

@@ -2682,6 +2682,16 @@ export class DataService {
             },
           ],
         },
+        {
+          menuValue: 'Recherche client',
+          route: routes.clientSearch,
+          hasSubRoute: false,
+          showSubRoute: false,
+          icon: 'user-search',
+          base: 'clientSearch',
+          materialicons: '',
+          subMenus: [],
+        },
       ]
     },
     {

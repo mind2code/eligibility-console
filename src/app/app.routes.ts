@@ -79,6 +79,14 @@ export const routes: Routes = [
         ],
         canActivate: [canActivateAuthRole],
         data: { role: 'admin' }
+      },
+      {
+        path: 'clients', loadComponent: () => import('./features/clients/clients.component').then(m => m.ClientsComponent),
+        children: [
+          { path: 'recherche', loadComponent: () => import('./features/clients/client-search/client-search.component').then(m => m.ClientSearchComponent) },
+        ],
+        canActivate: [canActivateAuthRole],
+        data: { role: 'admin' }
       }
 
     ]

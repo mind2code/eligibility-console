@@ -1,0 +1,257 @@
+<div class="page-wrapper vh-100 d-flex flex-column justify-content-between">
+  <div class="content flex-fill h-100">
+    <!-- Breadcrumb -->
+    <div
+      class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3"
+    >
+      <app-breadcrumbs
+        title="Recherche client"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <app-collapse-header></app-collapse-header>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="card">
+      <div
+        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3"
+      >
+        <h5>Consulter les informations d'un client</h5>
+      </div>
+      <div class="card-body">
+        <!-- Search Form -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h6>Critères de Recherche</h6>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="search()">
+              <div class="row">
+                <div class="col-sm-6 col-md-4 mb-3">
+                  <label for="meterNum" class="form-label">
+                    Numéro Compteur <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="meterNum"
+                    name="meterNum"
+                    class="form-control"
+                    placeholder="Entrer le numéro du compteur"
+                    [(ngModel)]="meterNum"
+                    required
+                  />
+                </div>
+
+                <div class="col-sm-6 col-md-4 mb-3 d-flex align-items-end">
+                  <button type="submit" class="btn btn-primary w-100" [disabled]="!meterNum || loadingBtn">
+                    <i
+                      class="fa me-2"
+                      [ngClass]="{
+                        'fa-spin fa-spinner': loadingBtn,
+                        'ti ti-search': !loadingBtn
+                      }"
+                    ></i>
+                    {{ loadingBtn ? 'Recherche en cours...' : 'Rechercher' }}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Results -->
+        @if (hasSearched) {
+          <div class="row">
+            <!-- Informations client -->
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-header">
+                  <h6><i class="ti ti-user me-2"></i>Informations du client</h6>
+                </div>
+                <div class="card-body">
+                  @if (clientInfo) {
+                    <table class="table table-borderless mb-0">
+                      <tbody>
+                        @for (entry of clientInfoEntries; track entry.key) {
+                          <tr>
+                            <th scope="row" class="text-muted" style="width: 45%;">{{ entry.label }}</th>
+                            <td class="fw-bold">{{ entry.value }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  } @else {
+                    <h5 class="no-record">Aucune information client trouvée</h5>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Solde dette -->
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-header">
+                  <h6><i class="ti ti-cash me-2"></i>Solde de la dette</h6>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                  @if (soldeDette) {
+                    <div class="text-center">
+                      <h2 class="fw-bold mb-0">
+                        {{ soldeDette.montant ?? soldeDette.solde ?? 0 }}
+                        {{ soldeDette.devise || 'FCFA' }}
+                      </h2>
+                      <p class="text-muted mb-0">Montant dû sur ce compteur</p>
+                    </div>
+                  } @else {
+                    <h5 class="no-record">Aucune information de dette trouvée</h5>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 mb-3">
+              <div class="card h-100 mb-0">
+                <div class="card-header">
+                  <h6><i class="ti ti-bolt me-2"></i>Achats énergie réussis (5 derniers)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table datatable">
+                      <thead class="thead-light">
+                        <tr><th>#</th><th>ID</th><th>Montant</th><th>Partenaire</th><th>Système</th><th>Token</th><th>kWh</th><th>Date</th></tr>
+                      </thead>
+                      <tbody>
+                        @for (transaction of energySuccessTransactions; track $index) {
+                          <tr>
+                            <th scope="row">{{ $index + 1 }}</th>
+                            <td class="fw-bold">{{ transaction.transid }}</td>
+                            <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                            <td>{{ transaction.partenaire }}</td>
+                            <td><span class="badge badge-sm badge-primary">{{ transaction.system }}</span></td>
+                            <td><span class="badge badge-sm badge-info">{{ transaction.token }}</span></td>
+                            <td>{{ transaction.kwh }}</td>
+                            <td>{{ transaction.transactionDate }}</td>
+                          </tr>
+                        }
+                        @if (energySuccessTransactions.length === 0) {
+                          <tr><td colspan="8"><h5 class="no-record">Aucune transaction trouvée</h5></td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <div class="card h-100 mb-0">
+                <div class="card-header">
+                  <h6><i class="ti ti-bolt me-2"></i>Achats énergie échoués (5 derniers)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table datatable">
+                      <thead class="thead-light">
+                        <tr><th>#</th><th>ID</th><th>Montant</th> <th>Partenaire</th><th>Système</th><th>Cause</th><th>Date</th></tr>
+                      </thead>
+                      <tbody>
+                        @for (transaction of energyFailedTransactions; track $index) {
+                          <tr>
+                            <th scope="row">{{ $index + 1 }}</th>
+                            <td class="fw-bold">{{ transaction.transid }}</td>
+                            <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                            <td>{{ transaction.partenaire }}</td>
+                            <td><span class="badge badge-sm badge-primary">{{ transaction.system }}</span></td>
+                            <td class="text-danger">{{ transaction.code }} {{ transaction.message }}</td>
+                            <td>{{ transaction.transactionDate }}</td>
+                          </tr>
+                        }
+                        @if (energyFailedTransactions.length === 0) {
+                          <tr><td colspan="8"><h5 class="no-record">Aucune transaction trouvée</h5></td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <div class="card h-100 mb-0">
+                <div class="card-header">
+                  <h6><i class="ti ti-credit-card me-2"></i>Règlements dette réussis (5 dernières)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table datatable">
+                      <thead class="thead-light">
+                        <tr><th>#</th><th>ID</th><th>Montant</th><th>Partenaire</th><th>Système</th><th>Date</th></tr>
+                      </thead>
+                      <tbody>
+                        @for (transaction of debtSuccessTransactions; track $index) {
+                          <tr>
+                            <th scope="row">{{ $index + 1 }}</th>
+                            <td class="fw-bold">{{ transaction.transid }}</td>
+                            <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                            <td>{{ transaction.partenaire }}</td>
+                            <td><span class="badge badge-sm badge-primary">{{ transaction.system }}</span></td>
+                            <td>{{ transaction.transactionDate }}</td>
+                          </tr>
+                        }
+                        @if (debtSuccessTransactions.length === 0) {
+                          <tr><td colspan="6"><h5 class="no-record">Aucune transaction trouvée</h5></td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+              <div class="card h-100 mb-0">
+                <div class="card-header">
+                  <h6><i class="ti ti-credit-card me-2"></i>Règlements dette échoués (5 dernières)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table datatable">
+                      <thead class="thead-light">
+                        <tr><th>#</th><th>ID</th><th>Montant</th><th>Partenaire</th><th>Système</th><th>Cause</th><th>Date</th></tr>
+                      </thead>
+                      <tbody>
+                        @for (transaction of debtFailedTransactions; track $index) {
+                          <tr>
+                            <th scope="row">{{ $index + 1 }}</th>
+                            <td class="fw-bold">{{ transaction.transid }}</td>
+                            <td class="fw-bold">{{ transaction.amount }} FCFA</td>
+                            <td>{{ transaction.partenaire }}</td>
+                            <td><span class="badge badge-sm badge-primary">{{ transaction.system }}</span></td>
+                            <td class="text-danger">{{ transaction.code }} {{ transaction.message }}</td>
+                            <td>{{ transaction.transactionDate }}</td>
+                          </tr>
+                        }
+                        @if (debtFailedTransactions.length === 0) {
+                          <tr><td colspan="7"><h5 class="no-record">Aucune transaction trouvée</h5></td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="alert alert-info" role="alert">
+            <i class="ti ti-info-circle me-2"></i>
+            Renseignez le numéro de compteur ci-dessus pour rechercher les informations d'un client.
+          </div>
+        }
+      </div>
+
+      <app-footer></app-footer>
+    </div>
+  </div>
+</div>
