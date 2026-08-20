@@ -10,15 +10,18 @@ const isAccessAllowed = async (
 ): Promise<boolean | UrlTree> => {
   const { authenticated, grantedRoles } = authData;
 
-  const requiredRole = route.data['role'];
-  if (!requiredRole) {
+  const configuredRoles = route.data['roles'] ?? route.data['role'];
+  if (!configuredRoles) {
     return false;
   }
+  const requiredRoles: string[] = Array.isArray(configuredRoles)
+    ? configuredRoles
+    : [configuredRoles];
 
   const hasRequiredRole = (role: string): boolean =>
     Object.values(grantedRoles.resourceRoles).some((roles) => roles.includes(role));
 
-  if (authenticated && hasRequiredRole(requiredRole)) {
+  if (authenticated && requiredRoles.some(hasRequiredRole)) {
     return true;
   }
 

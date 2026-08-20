@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router';
-import { SideBar, SideBarMenu } from '../../../shared/models/models';
+import { SideBar, SideBarMenu, SubMenu } from '../../../shared/models/models';
 import { DataService } from '../../../shared/data/data.service';
 import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 import { CommonService } from '../../../shared/common/common.service';
@@ -65,6 +65,25 @@ export class DefaultSidebarComponent implements OnDestroy, OnInit {
         })
       }))
       .filter(section => section.menu.length > 0);
+  }
+
+  public isMenuActive(menu: SideBarMenu): boolean {
+    return this.isRouteActive(menu.route) ||
+      (menu.subMenus ?? []).some(subMenu => this.isRouteActive(subMenu.route));
+  }
+
+  public isRouteActive(route?: string): boolean {
+    return !!route && this.router.isActive(route, {
+      paths: 'exact',
+      queryParams: 'exact',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
+  }
+
+  public isSubMenuActive(menu: SubMenu): boolean {
+    return this.isRouteActive(menu.route) ||
+      (menu.subMenusTwo ?? []).some(subMenu => this.isRouteActive(subMenu.route));
   }
 
 

@@ -23,7 +23,7 @@ export const routes: Routes = [
           { path: 'liste-partenaires', loadComponent: () => import('./features/partenaires/partnerlist/partnerlist.component').then(m => m.PartnerlistComponent) },
         ],
         canActivate: [canActivateAuthRole],
-        data: { role: 'admin' }
+        data: { roles: ['admin', 'crc'] }
       },
       {
         path: 'vendeurs', loadComponent: () => import('./features/vendeurs/vendeurs.component').then(m => m.VendeursComponent),
@@ -78,7 +78,7 @@ export const routes: Routes = [
           { path: 'dette', loadComponent: () => import('./features/transactions/transaction-dette-list/transaction-dette-list.component').then(m => m.TransactionDetteListComponent) },
         ],
         canActivate: [canActivateAuthRole],
-        data: { role: 'admin' }
+        data: { roles: ['admin', 'crc'] }
       },
       {
         path: 'clients', loadComponent: () => import('./features/clients/clients.component').then(m => m.ClientsComponent),
@@ -86,7 +86,7 @@ export const routes: Routes = [
           { path: 'recherche', loadComponent: () => import('./features/clients/client-search/client-search.component').then(m => m.ClientSearchComponent) },
         ],
         canActivate: [canActivateAuthRole],
-        data: { role: 'admin' }
+        data: { roles: ['admin', 'crc'] }
       }
 
     ]

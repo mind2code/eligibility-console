@@ -3,6 +3,7 @@ import { routes } from '../routes/routes';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { apiResultFormat, MainMenu, SideBar, SideBarMenu } from '../models/models';
+import Keycloak from 'keycloak-js';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,9 @@ export class DataService {
   toggleCollapse() {
     this.collapseSubject.next(!this.collapseSubject.value);
   }
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private keycloak: Keycloak) {
+    this.getSideBarData.next(this.getSideBarDataForCurrentUser());
+  }
   public getDataTable(): Observable<apiResultFormat> {
     return this.http.get<apiResultFormat>('assets/json/data-tables.json').pipe(
       map((res: apiResultFormat) => {
@@ -2739,6 +2742,32 @@ export class DataService {
   public getSideBarData: BehaviorSubject<SideBar[]> = new BehaviorSubject<
     SideBar[]
   >(this.sideBar);
+
+  private getSideBarDataForCurrentUser(): SideBar[] {
+    const resourceAccess = this.keycloak.tokenParsed?.resource_access as
+      | Record<string, { roles?: string[] }>
+      | undefined;
+    const isCrcAgent =
+      this.keycloak.hasRealmRole('crc') ||
+      Object.values(resourceAccess ?? {}).some((access) =>
+        access.roles?.includes('crc')
+      );
+
+    if (!isCrcAgent) {
+      return this.sideBar;
+    }
+
+    return this.sideBar
+      .map((section: SideBar) => ({
+        ...section,
+        menu: section.menu.filter(
+          (menu: SideBarMenu) =>
+            menu.menuValue === 'Transactions' ||
+            menu.menuValue === 'Recherche client'
+        ),
+      }))
+      .filter((section: SideBar) => section.menu.length > 0);
+  }
   public resetData(): void {
     this.sideBar.map((res: SideBar) => {
       res.showAsTab = false;

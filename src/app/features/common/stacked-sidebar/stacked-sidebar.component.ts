@@ -64,6 +64,25 @@ export class StackedSidebarComponent implements OnDestroy{
 public menuToggle() {
   this.showSubMenusTab = !this.showSubMenusTab;
 }
+public isRouteActive(route?: string): boolean {
+  return !!route && this.router.isActive(route, {
+    paths: 'exact',
+    queryParams: 'exact',
+    fragment: 'ignored',
+    matrixParams: 'ignored',
+  });
+}
+public isMenuActive(menu: SideBarMenu): boolean {
+  return this.isRouteActive(menu.route) ||
+    (menu.subMenus ?? []).some(subMenu =>
+      this.isRouteActive(subMenu.route) ||
+      (subMenu.subMenusTwo ?? []).some(subMenuTwo => this.isRouteActive(subMenuTwo.route))
+    );
+}
+public isSubMenuActive(menu: { route?: string; subMenusTwo?: { route?: string }[] }): boolean {
+  return this.isRouteActive(menu.route) ||
+    (menu.subMenusTwo ?? []).some(subMenu => this.isRouteActive(subMenu.route));
+}
   public showTabs(mainTittle: SideBarMenu): void {
     this.side_bar_data.map((mainMenus: SideBarMenu) => {
       if (mainTittle.menuValue === mainMenus.menuValue) {

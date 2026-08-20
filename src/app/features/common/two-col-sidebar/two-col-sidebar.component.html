@@ -15,7 +15,7 @@
                 </a> -->
                 @for (mainTittle of side_bar_data; track mainTittle) {
                     <a (click)="showTabs(mainTittle)" (keydown.enter)="showTabs(mainTittle)" href="javascript:void(0);" tabindex="0" class="nav-link"
-                      [class.active]="mainTittle.showMyTab === true || mainTittle.base === base || mainTittle.base2 === base || mainTittle.base3 === base || mainTittle.base4 === base || mainTittle.base5 === base || mainTittle.base7 === base">
+                      [class.active]="mainTittle.showMyTab === true || isMenuActive(mainTittle)">
 
                       <i [class]="'ti ti-' + mainTittle.icon"></i>
                     </a>
@@ -66,7 +66,7 @@
                             @for (subMenus of mainTittle.subMenus; track subMenus) {
                             <li>
                               <a [routerLink]="subMenus.route"
-                                [class.active]=" base === subMenus.base || page === subMenus.base">
+                                [class.active]="isSubMenuActive(subMenus)">
                                 @if (subMenus.currentActive === true) {
                                 <span class="badge rounded-pill bg-primary float-end">1</span>
                                 }
@@ -79,13 +79,13 @@
                             @for (subMenus of mainTittle.subMenus; track subMenus) {
                             @if (subMenus.customSubmenuTwo === false) {
                             <li>
-                              <a [class.active]="page === subMenus.base" [routerLink]="subMenus.route">{{ subMenus.menuValue }}</a>
+                              <a [class.active]="isSubMenuActive(subMenus)" [routerLink]="subMenus.route">{{ subMenus.menuValue }}</a>
                             </li>
                             }
 
                             @if (subMenus.customSubmenuTwo === true) {
                             <li class="submenu submenu-two">
-                              <a href="javascript:void(0);" [class.active]="base === subMenus.base || base === subMenus.base2 "
+                              <a href="javascript:void(0);" [class.active]="isSubMenuActive(subMenus)"
                                 (click)="openSubmenuOne(subMenus)" [ngClass]="{'subdrop' : openSubmenuOneItem === subMenus}">
                                 {{ subMenus.menuValue }}
                                 <span class="menu-arrow inside-submenu"></span>
@@ -93,7 +93,7 @@
                               <ul [ngClass]="openSubmenuOneItem === subMenus ? 'd-block' : 'd-none'">
                                 @for (subMenuTwo of subMenus.subMenusTwo; track subMenuTwo) {
                                 <li>
-                                  <a [class.active]="last === subMenus.base || base === subMenus.base2" [routerLink]="subMenuTwo.route">{{ subMenuTwo.menuValue
+                                  <a [class.active]="isRouteActive(subMenuTwo.route)" [routerLink]="subMenuTwo.route">{{ subMenuTwo.menuValue
                                     }}</a>
                                 </li>
                                 }

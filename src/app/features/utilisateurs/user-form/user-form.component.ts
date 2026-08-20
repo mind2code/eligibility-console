@@ -85,7 +85,7 @@ export class UserFormComponent implements OnInit {
             }
             return String(r);
           });
-          this.roles = this.roles.filter(role => role == 'admin')
+          this.roles = this.roles.filter(role => role == 'admin' || role == 'crc')
         }
       },
       error: (error) => {

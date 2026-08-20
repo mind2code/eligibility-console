@@ -58,6 +58,24 @@ export class HorizontalSidebarComponent implements OnDestroy{
 public menuToggle() {
   this.showSubMenusTab = !this.showSubMenusTab;
 }
+public isRouteActive(route?: string): boolean {
+  return !!route && this.router.isActive(route, {
+    paths: 'exact',
+    queryParams: 'exact',
+    fragment: 'ignored',
+    matrixParams: 'ignored',
+  });
+}
+public isMenuActive(menu: Menu): boolean {
+  return (menu.subMenus ?? []).some(subMenu =>
+    this.isRouteActive(subMenu.route) ||
+    (subMenu.subMenusTwo ?? []).some(subMenuTwo => this.isRouteActive(subMenuTwo.route))
+  );
+}
+public isSubMenuActive(menu: { route?: string; subMenusTwo?: { route?: string }[] }): boolean {
+  return this.isRouteActive(menu.route) ||
+    (menu.subMenusTwo ?? []).some(subMenu => this.isRouteActive(subMenu.route));
+}
 public expandSubMenus(menu: Menu): void {
   sessionStorage.setItem('menuValue', menu.menuValue);
   this.side_bar_data.map((mainMenus: MainMenu) => {

@@ -15,7 +15,7 @@
             (click)="expandSubMenus(menu)"
             (keydown.enter)="expandSubMenus(menu)"
             tabindex="0"
-            [class.active]="base === menu.base || base === menu.base2 || base === menu.base3 || base === menu.base4 || base === menu.base5 || base === menu.base6 "
+            [class.active]="isMenuActive(menu)"
             [ngClass]="{'subdrop': menu.showSubRoute === true}">
             <i [class]="'ti ti-' + menu.icon"></i>
             <span>{{ menu.menuValue }}</span>
@@ -30,9 +30,7 @@
             <li>
               <a
                 [routerLink]="subMenus.route"
-                [class.active]="
-                  page === subMenus.base || base === subMenus.base
-                "
+                [class.active]="isSubMenuActive(subMenus)"
               >
                 {{ subMenus.menuValue }}</a
               >
@@ -45,8 +43,7 @@
           <a
             href="javascript:void(0);"
             (click)="expandSubMenus(menu)"
-            [class.active]="base === menu.base || base === menu.base2 || base === menu.base3 || base === menu.base4 || base === menu.base5 || base === menu.base6
-            || base === menu.base7 || base === menu.base8 || base === menu.base9 || base === menu.base10 "
+            [class.active]="isMenuActive(menu)"
             [ngClass]="{ 'subdrop': menu.showSubRoute === true }"
           >
             <i class="ti ti-cube"></i>
@@ -57,14 +54,14 @@
             @for (subMenus of menu.subMenus; track subMenus) { @if
             (subMenus.customSubmenuTwo === false) {
             <li>
-              <a [class.active]="base === subMenus.base || page === subMenus.base"
+              <a [class.active]="isSubMenuActive(subMenus)"
               [routerLink]="subMenus.route">{{ subMenus.menuValue }}</a>
             </li>
             } @if (subMenus.customSubmenuTwo === true) {
             <li class="submenu submenu-two">
               <a
                 href="javascript:void(0);"
-                [class.active]="base === subMenus.base "
+                [class.active]="isSubMenuActive(subMenus)"
                 (click)="openSubmenuOne(subMenus)"
                 [ngClass]="{ subdrop: openSubmenuOneItem === subMenus }"
               >
@@ -78,9 +75,7 @@
               >
                 @for (subMenuTwo of subMenus.subMenusTwo; track subMenuTwo) {
                 <li>
-                  <a [class.active]="
-                  page === subMenuTwo.base
-                " [routerLink]="subMenuTwo.route">{{
+                  <a [class.active]="isRouteActive(subMenuTwo.route)" [routerLink]="subMenuTwo.route">{{
                     subMenuTwo.menuValue
                   }}</a>
                 </li>
