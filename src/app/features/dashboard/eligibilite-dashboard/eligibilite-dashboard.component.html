@@ -1,0 +1,310 @@
+<div class="page-wrapper">
+  <div class="content">
+
+    <!-- Breadcrumb -->
+    <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
+      <app-breadcrumbs title="Dashboard" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
+        <div class="me-2 mb-2">
+          <button class="btn btn-white border btn-sm d-inline-flex align-items-center" type="button"
+                  title="Actualiser" (click)="load()" [disabled]="loading">
+            <i class="ti ti-reload me-1" [ngClass]="{ 'fa-spin': loading }"></i>Actualiser
+          </button>
+        </div>
+        <app-collapse-header></app-collapse-header>
+      </div>
+    </div>
+    <!-- /Breadcrumb -->
+
+    <div class="alert bg-secondary-transparent alert-dismissible fade show mb-4" role="alert">
+      Bienvenue dans le tableau de bord du système ELIGIBILITY
+      <button type="button" class="btn-close fs-14" data-bs-dismiss="alert" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+
+    @if (loading) {
+      <div class="d-flex justify-content-center align-items-center py-5">
+        <i class="fa fa-spin fa-spinner fs-24 me-2"></i> Chargement du dashboard...
+      </div>
+    } @else if (loadError) {
+      <div class="alert alert-danger" role="alert">
+        <i class="ti ti-alert-circle me-2"></i>
+        Une erreur est survenue lors du chargement du dashboard.
+        <button class="btn btn-sm btn-outline-danger ms-2" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (summary) {
+
+      <!-- KPI Cards -->
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-primary flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-shopping-cart text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Ventes du jour</p>
+                  <h5>{{ summary.kpis.ventesDuJourCount }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">{{ summary.kpis.ventesDuJourMontant | number:'1.0-0' }} FCFA encaissés aujourd'hui</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-secondary flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-exchange text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Transactions du jour</p>
+                  <h5>{{ summary.kpis.transactionsDuJourCount }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">{{ summary.kpis.transactionsDuJourMontant | number:'1.0-0' }} FCFA sur les comptes</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-success flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-wallet text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Solde disponible total</p>
+                  <h5>{{ summary.kpis.soldeTotalDisponible | number:'1.0-0' }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">FCFA, tous comptes partenaires confondus</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-warning flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-lock text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Montant réservé</p>
+                  <h5>{{ summary.kpis.montantTotalReserve | number:'1.0-0' }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">FCFA en cours de réservation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-purple flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-cash-register text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Sessions caisse ouvertes</p>
+                  <h5>{{ summary.kpis.sessionsCaisseOuvertes }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">Actuellement en cours</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-info flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-gauge text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Compteurs enregistrés</p>
+                  <h5>{{ summary.kpis.compteursEnregistres }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">Total dans le système</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-danger flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-building-bank text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Comptes actifs</p>
+                  <h5>{{ summary.kpis.comptesActifs }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">Comptes partenaires</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="card position-relative">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md br-10 icon-rotate bg-teal flex-shrink-0">
+                  <span class="d-flex align-items-center"><i class="ti ti-users-group text-white fs-16"></i></span>
+                </div>
+                <div class="ms-3">
+                  <p class="fw-medium text-truncate mb-1">Utilisateurs actifs</p>
+                  <h5>{{ summary.kpis.utilisateursActifs }}</h5>
+                </div>
+              </div>
+              <p class="fw-medium fs-13 mb-0">Comptes activés</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="row">
+        <div class="col-xl-7 d-flex">
+          <div class="card flex-fill">
+            <div class="card-header">
+              <h5>Évolution des ventes (7 derniers jours)</h5>
+            </div>
+            <div class="card-body">
+              @if (ventesChartOptions.series) {
+                <apx-chart
+                  [series]="ventesChartOptions.series"
+                  [chart]="ventesChartOptions.chart!"
+                  [colors]="ventesChartOptions.colors!"
+                  [xaxis]="ventesChartOptions.xaxis!"
+                  [yaxis]="ventesChartOptions.yaxis!"
+                  [stroke]="ventesChartOptions.stroke!"
+                  [dataLabels]="ventesChartOptions.dataLabels!"
+                  [grid]="ventesChartOptions.grid!"
+                  [legend]="ventesChartOptions.legend!"
+                  [tooltip]="ventesChartOptions.tooltip!"
+                  [plotOptions]="ventesChartOptions.plotOptions!"
+                ></apx-chart>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-5 d-flex">
+          <div class="card flex-fill">
+            <div class="card-header">
+              <h5>Transactions par statut (30 derniers jours)</h5>
+            </div>
+            <div class="card-body">
+              @if (hasStatutsData) {
+                <apx-chart
+                  [series]="statutsChartOptions.series!"
+                  [chart]="statutsChartOptions.chart!"
+                  [labels]="statutsChartOptions.labels!"
+                  [colors]="statutsChartOptions.colors!"
+                  [legend]="statutsChartOptions.legend!"
+                  [dataLabels]="statutsChartOptions.dataLabels!"
+                  [fill]="statutsChartOptions.fill!"
+                ></apx-chart>
+              } @else {
+                <h6 class="no-record text-center py-5">Aucune transaction sur la période</h6>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables -->
+      <div class="row">
+        <div class="col-xl-7 d-flex">
+          <div class="card flex-fill">
+            <div class="card-header">
+              <h5>Dernières ventes</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Compteur</th>
+                      <th>Type</th>
+                      <th>Mode</th>
+                      <th>Agent</th>
+                      <th>Montant</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (vente of summary.dernieresVentes; track vente.id) {
+                      <tr>
+                        <td class="fw-medium">{{ vente.meterNumber || '-' }}</td>
+                        <td>{{ vente.typeOperation || '-' }}</td>
+                        <td>{{ vente.modeReglement || '-' }}</td>
+                        <td>{{ vente.agent || '-' }}</td>
+                        <td class="fw-medium">{{ vente.montant | number:'1.0-0' }} FCFA</td>
+                        <td>{{ vente.dateTransaction | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                    }
+                    @if (!summary.dernieresVentes!.length) {
+                      <tr>
+                        <td colspan="6"><h6 class="no-record text-center py-4">Aucune vente récente</h6></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-5 d-flex">
+          <div class="card flex-fill">
+            <div class="card-header">
+              <h5>Sessions de caisse ouvertes</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Agent</th>
+                      <th>Ouverte le</th>
+                      <th>Solde théorique</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (session of summary.sessionsOuvertes; track session.id) {
+                      <tr>
+                        <td class="fw-medium">{{ session.agent || '-' }}</td>
+                        <td>{{ session.dateOuverture | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td class="fw-medium">{{ session.soldeTheorique | number:'1.0-0' }} FCFA</td>
+                      </tr>
+                    }
+                    @if (!summary.sessionsOuvertes.length) {
+                      <tr>
+                        <td colspan="3"><h6 class="no-record text-center py-4">Aucune session ouverte</h6></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+  <app-footer></app-footer>
+</div>

@@ -14,7 +14,7 @@ export const routes: Routes = [
       {
         path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
         children: [
-          { path: 'index', loadComponent: () => import('./features/dashboard/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent) },
+          { path: 'index', loadComponent: () => import('./features/dashboard/eligibilite-dashboard/eligibilite-dashboard.component').then(m => m.EligibiliteDashboardComponent) },
         ],
       },
       {

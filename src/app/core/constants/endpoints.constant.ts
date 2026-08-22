@@ -9,4 +9,5 @@ export const url_path = {
     TRANSACTIONS:'/transactions',
     TRANSACTIONS_DETTE:'/transactions-dette',
     VENDING:'/vending/v1',
+    DASHBOARD:'/dashboard',
 }
